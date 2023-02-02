@@ -9,7 +9,7 @@ include_directories(
     include
 )
 
-file(GLOB SOURCES
+file(GLOB SOURCES 
     src/*.cpp
 )
 

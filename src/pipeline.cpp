@@ -45,7 +45,7 @@ Pipeline::Pipeline(const glm::ivec2& resolution)  : lithium::RenderPipeline{reso
     _text = new lithium::Text(AssetFactory::getFonts()->permanentMarker, "Hello ggj2023!", 1.0f);
     //_text->setPosition(800.0f, 400.0f, 0.0f);
     _text->setScale(2.0f);
-    _text->setAlignment(lithium::Text::Alignment::CENTER);
+    _text->setAlignment(lithium::Text::Alignment::LEFT);
     _text->setColor(glm::vec3{1.0f, 0.0f, 1.0f});
 }
 
@@ -88,5 +88,5 @@ void Pipeline::render()
         return true;
     });
 
-    RENDER_TEXT(800.0f, 400.0f, "Hello ggj2023!")
+    RENDER_TEXT(32.0f, 32.0f, "Hello ggj2023! <3")
 }

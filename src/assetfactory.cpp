@@ -23,11 +23,11 @@ const std::vector<attr> AssetFactory::modelAttributes{POSITION, NORMAL, UV, BONE
 void AssetFactory::loadMeshes()
 {
     AssetFactory& instance = getInstance();
-    instance._meshes.screen = new lithium::Mesh(AssetFactory::objectAttributes,{
-        -1.0, -1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-        -1.0,  1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 1.0,
-        1.0,  1.0, 0.0f,	0.0f, 1.0f, 0.0f,	1.0, 1.0,
-        1.0, -1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	1.0, 0.0f,
+    instance._meshes.screen = new lithium::Mesh({POSITION, NORMAL, UV, attr::VEC3},{
+        -1.0f, -1.0f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,    1.0f, 0.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 1.0,     0.0f, 1.0f, 0.0f,
+        1.0f,  1.0f, 0.0f,	    0.0f, 1.0f, 0.0f,	1.0, 1.0,      1.0f, 1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f, 	    0.0f, 1.0f, 0.0f,	1.0, 0.0f,     0.0f, 1.0f, 1.0f 
     },
     {
         0, 2, 1,
