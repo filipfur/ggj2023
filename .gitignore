@@ -1,4 +1,2 @@
-dep/
 build/
-.vscode/
-__pycache__/
+.vscode/__pycache__/
