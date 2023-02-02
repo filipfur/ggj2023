@@ -1,0 +1,12 @@
+#pragma once
+
+namespace {{namespace}}
+{
+    class {{className}}
+    {
+    public:
+        {{className}}();
+        virtual ~{{className}}() noexcept;
+    private:
+    };
+}

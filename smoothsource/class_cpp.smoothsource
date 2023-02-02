@@ -1,0 +1,11 @@
+#include "{{fileNamePrefix}}{{className:lower}}.h"
+
+{{namespace}}{{className}}::{{className}}()
+{
+
+}
+
+{{namespace}}{{className}}::~{{className}}() noexcept
+{
+
+}

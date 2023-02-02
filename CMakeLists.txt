@@ -17,7 +17,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${CMAKE_PROJECT_NAME} lithium)
 
-add_subdirectory(dep/lithium)
+add_subdirectory(dep/lithium) 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
