@@ -40,6 +40,7 @@ void AssetFactory::loadTextures()
 {
     AssetFactory& instance = getInstance();
     instance._textures.blockDiffuse = lithium::ImageTexture::load("assets/Kraxbox_logo_lithium_metal_2ff2069c-b84a-426c-bf92-e9831105a5df.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
+    instance._textures.treeDiffuse = lithium::ImageTexture::load("assets/tree.jpg", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.permanentMarkerSdf = lithium::ImageTexture::load("assets/PermanentMarker32.png", GL_RGB, GL_RGBA, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_TEXTURE0, 1, false);
 }
 

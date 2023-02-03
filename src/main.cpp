@@ -1,6 +1,7 @@
 #include "glapplication.h"
 #include "pipeline.h"
 #include "assetfactory.h"
+#include "menu.h"
 
 class App : public lithium::Application
 {
@@ -12,6 +13,7 @@ public:
         AssetFactory::loadObjects();
         AssetFactory::loadFonts();
         _pipeline = new Pipeline(defaultFrameBufferResolution());
+        _menu = new Menu(_pipeline);
     }
 
     virtual ~App() noexcept
@@ -23,10 +25,12 @@ public:
     {
         _pipeline->update(dt);
         _pipeline->render();
+        _menu->render();
     }
     
 private:
     Pipeline* _pipeline{nullptr};
+    Menu* _menu{nullptr};
 };
 
 int main(int argc, const char* argv[])

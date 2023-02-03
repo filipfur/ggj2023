@@ -5,10 +5,7 @@
 #define RENDER_TEXT(x, y, stream) { \
     std::stringstream ss{}; \
     ss << stream; \
-    _text->setPosition(x, y, 0.0f); \
-    _text->setText(ss.str()); \
-    _text->shade(_sdfTextShader); \
-    _text->draw(); \
+    renderText(x, y, ss.str()); \
 } \
 
 using attr = lithium::VertexArrayBuffer::AttributeType;
@@ -78,10 +75,11 @@ void Pipeline::render()
     _screenMesh->bind();
     glActiveTexture(GL_TEXTURE0);
     glDepthMask(GL_FALSE);
+    AssetFactory::getTextures()->treeDiffuse->bind();
     _screenMesh->draw();
     glDepthMask(GL_TRUE);
     std::for_each(_objects.begin(), _objects.end(), [this](lithium::Object* o) {
-        o->setScale(1.0f);
+        o->setScale(0.2f);
         o->setColor(glm::vec3{1.0f, 0.85f, 0.55f});
         o->shade(_blockShader);
         o->draw();
@@ -89,4 +87,12 @@ void Pipeline::render()
     });
 
     RENDER_TEXT(32.0f, 32.0f, "Hello ggj2023! <3")
+}
+
+void Pipeline::renderText(float x, float y, const std::string& str)
+{
+    _text->setPosition(x, y, 0.0f);
+    _text->setText(str);
+    _text->shade(_sdfTextShader);
+    _text->draw();
 }

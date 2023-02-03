@@ -18,6 +18,8 @@ public:
 
     virtual void render() override;
 
+    void renderText(float x, float y, const std::string& str);
+
 private:
     lithium::ShaderProgram* _blockShader{nullptr};
     lithium::ShaderProgram* _borderShader{nullptr};

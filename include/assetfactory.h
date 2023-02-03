@@ -20,6 +20,7 @@ public:
     {
         lithium::ImageTexture* permanentMarkerSdf;
         lithium::ImageTexture* blockDiffuse;
+        lithium::ImageTexture* treeDiffuse;
     } _textures;
 
     struct Objects

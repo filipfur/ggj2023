@@ -10,7 +10,11 @@ uniform sampler2D u_texture;
 
 void main()
 {
-    vec4 diffuse = texture(u_texture, texCoord);
+    vec2 uv = texCoord;
+    uv.y *= 900/1600.0;
+    uv.y += 0.1;
+    vec4 diffuse = texture(u_texture, uv);
 
     fragColor = vec4(diffuse.rgb * color, (1.0 - texCoord.y) / 1.3);
+    fragColor = diffuse;
 }

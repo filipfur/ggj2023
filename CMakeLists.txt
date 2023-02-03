@@ -3,13 +3,13 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(ggj2023)
+project(ggj2023) 
 
 include_directories(
     include
 )
 
-file(GLOB SOURCES 
+file(GLOB SOURCES
     src/*.cpp
 )
 
