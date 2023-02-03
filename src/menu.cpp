@@ -28,7 +28,7 @@ void Menu::render()
         {
             _pipeline->textColor(glm::vec3{0.0f, 1.0f, 0.0f});
         }
-        _pipeline->renderText(500.0f, 500.0f + i * 100.0f, menuItem->label());
+        _pipeline->renderText(900.0f, 500.0f + i * 100.0f, menuItem->label());
         ++i;
     });
 }

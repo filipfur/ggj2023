@@ -28,7 +28,7 @@ Pipeline::Pipeline(const glm::ivec2& resolution)  : lithium::RenderPipeline{reso
     _borderShader->setUniform("u_texture_0", 0);
     _borderShader->setUniform("u_projection", _camera->projection());
     _screenShader = new lithium::ShaderProgram("shaders/screenshader.vert", "shaders/screenshader.frag");
-    _object = AssetFactory::getObjects()->block->clone();
+    _object = AssetFactory::getObjects()->potato->clone();
     _object->setPosition(glm::vec3{0.0f});
     insertObject(_object->clone());
     _camera->setPosition(glm::vec3{3.0f, 3.0f, 3.0f});
@@ -39,9 +39,8 @@ Pipeline::Pipeline(const glm::ivec2& resolution)  : lithium::RenderPipeline{reso
     _orthoCamera->attachShader(_sdfTextShader);
     _orthoCamera->update(0);
 
-    _text = new lithium::Text(AssetFactory::getFonts()->permanentMarker, "Hello ggj2023!", 1.0f);
+    _text = new lithium::Text(AssetFactory::getFonts()->permanentMarker, "Hello ggj2023!", 1.6f);
     //_text->setPosition(800.0f, 400.0f, 0.0f);
-    _text->setScale(2.0f);
     _text->setAlignment(lithium::Text::Alignment::LEFT);
     _text->setColor(glm::vec3{1.0f, 0.0f, 1.0f});
 }
