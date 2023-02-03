@@ -1,6 +1,7 @@
 #include "glapplication.h"
 #include "pipeline.h"
 #include "assetfactory.h"
+#include "world.h"
 #include "menu.h"
 
 class App : public lithium::Application
@@ -13,6 +14,7 @@ public:
         AssetFactory::loadObjects();
         AssetFactory::loadFonts();
         _pipeline = new Pipeline(defaultFrameBufferResolution());
+        _world = new World(_pipeline);
         _menu = new Menu(_pipeline);
         input()->addPressedCallback(GLFW_KEY_UP, [this](int mods, int key){
             _menu->next();
@@ -55,6 +57,7 @@ public:
     
 private:
     Pipeline* _pipeline{nullptr};
+    World* _world{nullptr};
     Menu* _menu{nullptr};
 };
 
