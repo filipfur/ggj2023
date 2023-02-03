@@ -5,9 +5,18 @@
 #include "glmenuitem.h"
 #include "pipeline.h"
 
-class Menu : lithium::Menu
+class Menu : public lithium::Menu
 {
 public:
+
+    enum class Action
+    {
+        Connect,
+        HostGame,
+        Options,
+        Exit
+    };
+
     Menu(Pipeline* pipeline);
     virtual ~Menu() noexcept;
 

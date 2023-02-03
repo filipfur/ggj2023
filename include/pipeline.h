@@ -20,6 +20,11 @@ public:
 
     void renderText(float x, float y, const std::string& str);
 
+    void textColor(const glm::vec3& color)
+    {
+        _text->setColor(color);
+    }
+
 private:
     lithium::ShaderProgram* _blockShader{nullptr};
     lithium::ShaderProgram* _borderShader{nullptr};

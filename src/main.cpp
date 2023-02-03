@@ -14,6 +14,31 @@ public:
         AssetFactory::loadFonts();
         _pipeline = new Pipeline(defaultFrameBufferResolution());
         _menu = new Menu(_pipeline);
+        input()->addPressedCallback(GLFW_KEY_UP, [this](int mods, int key){
+            _menu->next();
+            return true;
+        });
+        input()->addPressedCallback(GLFW_KEY_DOWN, [this](int mods, int key){
+            _menu->previous();
+            return true;
+        });
+        input()->addPressedCallback(GLFW_KEY_ENTER, [this](int mods, int key){
+            int action = _menu->enter();
+            std::cout << "YIPPI: " << action << std::endl;
+            switch(action)
+            {
+                case Menu::Action::Connect:
+                    break;
+                case Menu::Action::HostGame:
+                    break;
+                case Menu::Action::Options:
+                    break;
+                case Menu::Action::Exit:
+                    exit(0);
+                    break;
+            }
+            return true;
+        });
     }
 
     virtual ~App() noexcept

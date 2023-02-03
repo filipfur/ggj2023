@@ -86,13 +86,14 @@ void Pipeline::render()
         return true;
     });
 
-    RENDER_TEXT(32.0f, 32.0f, "Hello ggj2023! <3")
+    //RENDER_TEXT(32.0f, 32.0f, "Hello ggj2023! <3")
 }
 
 void Pipeline::renderText(float x, float y, const std::string& str)
 {
     _text->setPosition(x, y, 0.0f);
     _text->setText(str);
+    _text->update(0);
     _text->shade(_sdfTextShader);
     _text->draw();
 }
