@@ -32,7 +32,6 @@ private:
     lithium::ShaderProgram* _sdfTextShader{nullptr};
     lithium::SimpleCamera* _camera{nullptr};
     lithium::OrthographicCamera* _orthoCamera;
-    lithium::Object* _object;
     lithium::Mesh* _screenMesh;
     lithium::Text* _text;
 };

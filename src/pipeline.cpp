@@ -1,6 +1,7 @@
 #include "pipeline.h"
 
 #include "assetfactory.h"
+#include "options.h"
 
 #define RENDER_TEXT(x, y, stream) { \
     std::stringstream ss{}; \
@@ -28,10 +29,8 @@ Pipeline::Pipeline(const glm::ivec2& resolution)  : lithium::RenderPipeline{reso
     _borderShader->setUniform("u_texture_0", 0);
     _borderShader->setUniform("u_projection", _camera->projection());
     _screenShader = new lithium::ShaderProgram("shaders/screenshader.vert", "shaders/screenshader.frag");
-    _object = AssetFactory::getObjects()->potato->clone();
-    _object->setPosition(glm::vec3{0.0f});
-    insertObject(_object->clone());
     _camera->setPosition(glm::vec3{3.0f, 3.0f, 3.0f});
+    //_camera->setPosition(glm::vec3{cameraOffsetX, cameraOffsetY, cameraOffsetZ});
     _camera->setTarget(glm::vec3{0.0f});
 
     _orthoCamera = new lithium::OrthographicCamera(0, resolution.x, 0, resolution.y, -10000.0f, 10000.0f);
@@ -50,7 +49,6 @@ Pipeline::~Pipeline() noexcept
     delete _blockShader;
     delete _screenShader;
     delete _screenMesh;
-    delete _object;
 }
 
 void Pipeline::update(float dt)
