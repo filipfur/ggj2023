@@ -3,6 +3,7 @@
 #include "glapplication.h"
 #include "pipeline.h"
 #include "assetfactory.h"
+#include "world.h"
 #include "menu.h"
 #include "server.h"
 #include "client.h"
@@ -24,6 +25,7 @@ public:
         AssetFactory::loadFonts();
         _characterFactory = new Potato(AssetFactory::getObjects()->potato);
         _pipeline = new Pipeline(defaultFrameBufferResolution());
+        _world = new World(_pipeline);
         _menu = new Menu(_pipeline);
         input()->addPressedCallback(GLFW_KEY_UP, [this](int mods, int key){
             _menu->next();
@@ -147,6 +149,7 @@ public:
     
 private:
     Pipeline* _pipeline{nullptr};
+    World* _world{nullptr};
     Menu* _menu{nullptr};
     Client* _client{nullptr};
     Server* _server{nullptr};
