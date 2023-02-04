@@ -3,6 +3,7 @@
 
 #include "basepipeline.h"
 #include "glparticlesystem.h"
+#include "globject.h"
 
 class CartoonShading : public BasePipeline
 {
@@ -34,6 +35,11 @@ public:
         
     }
 
+    void setOcean(lithium::Object* ocean)
+    {
+        _ocean = ocean;
+    }
+
     lithium::ShaderProgram* shaderProgram() const
     {
         return _shaderProgram;
@@ -57,6 +63,8 @@ private:
     lithium::ShaderProgram* _normalSkinningShader{nullptr};
     lithium::ShaderProgram* _colorProgram{nullptr};
     lithium::ShaderProgram* _shaderProgram{nullptr};
+    lithium::ShaderProgram* _waterProgram{nullptr};
     lithium::ShaderProgram* _bloomProgram{nullptr};
     lithium::ShaderProgram* _skinningShader{nullptr};
+    lithium::Object* _ocean{nullptr};
 };

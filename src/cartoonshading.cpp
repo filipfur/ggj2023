@@ -16,6 +16,10 @@ CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{reso
     _shaderProgram->setUniform("u_texture_0", 0);
     _shaderProgram->setUniform("u_shadow_map_0", 1);
 
+    _waterProgram = new lithium::ShaderProgram( "shaders/cartoon.vert", "shaders/water.frag" );
+    _waterProgram->setUniform("u_texture_0", 0);
+    _waterProgram->setUniform("u_shadow_map_0", 1);
+
     _bloomProgram = new lithium::ShaderProgram( "shaders/cartoon.vert", "shaders/cartoonbloom.frag" );
     _bloomProgram->setUniform("u_texture_0", 0);
 
@@ -101,7 +105,8 @@ CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{reso
         _normalShader,
         _normalSkinningShader,
         _lightShader,
-        _instShader
+        _instShader,
+        _waterProgram
     });
 }
 
@@ -121,6 +126,7 @@ void CartoonShading::update(float dt)
     std::for_each(_skinnedObjects.begin(), _skinnedObjects.end(), [dt](lithium::SkinnedObject* o){
         o->update(dt);
     });
+    _ocean->update(dt);
 }
 
 void CartoonShading::render()
@@ -182,6 +188,9 @@ void CartoonShading::render()
             object->shade(_skinningShader);
             object->draw();
         }
+        _waterProgram->setUniform("iTime", time());
+        _ocean->shade(_waterProgram);
+        _ocean->draw();
         
         afterDiffusePass();
 

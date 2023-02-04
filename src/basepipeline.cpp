@@ -66,6 +66,7 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution) : lithium::RenderPipeli
 
 void BasePipeline::update(float dt)
 {
+    lithium::RenderPipeline::update(dt);
     _camera->update(dt);
     _sceneUBO->bufferSubData(0, _camera->view());
     _sceneUBO->bufferSubData(64, _camera->projection());
@@ -73,7 +74,8 @@ void BasePipeline::update(float dt)
     _sceneUBO->bufferSubData(192, _camera->position());
     _sceneUBO->bufferSubData(208, _light->position());
     _sceneUBO->bufferSubData(224, _light->rgb());
-    _sceneUBO->bufferSubData(240, glm::vec3{time()});
+    float t = time();
+    _sceneUBO->bufferSubData(240, t);
 
     static float near_plane = 1.0f, far_plane = 100.0f;
     static glm::mat4 lightProjection{glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, near_plane, far_plane)};

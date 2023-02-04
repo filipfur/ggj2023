@@ -49,7 +49,7 @@ void AssetFactory::loadTextures()
     AssetFactory& instance = getInstance();
     instance._textures.blockDiffuse = lithium::ImageTexture::load("assets/Kraxbox_logo_lithium_metal_2ff2069c-b84a-426c-bf92-e9831105a5df.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.potatoDiffuse = lithium::ImageTexture::load("assets/Potato.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
-    instance._textures.oceanDiffuse = lithium::ImageTexture::load("assets/Ocean.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
+    instance._textures.oceanDiffuse = lithium::ImageTexture::load("assets/Ocean/ocean.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.dirtDiffuse = lithium::ImageTexture::load("assets/Dirt.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.grassDiffuse = lithium::ImageTexture::load("assets/Grass.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.treeDiffuse = lithium::ImageTexture::load("assets/Tree.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
