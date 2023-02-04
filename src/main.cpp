@@ -30,7 +30,7 @@ public:
         auto light = new lithium::Light(AssetFactory::getMeshes()->screen);
         //light->setTexture(bulbTexture);
         light->setColor(glm::vec4(0.96f, 0.86f, 0.82f, 1.0f));
-        light->setPosition(glm::vec3{8.0f, 24.0f, 8.0f});
+        light->setPosition(glm::vec3{8.0f, 64.0f, 8.0f});
         light->setScale(0.8);
         _pipeline->setLight(light);
         _world = new World(_pipeline);
