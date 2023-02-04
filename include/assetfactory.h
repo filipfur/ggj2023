@@ -18,16 +18,19 @@ public:
         lithium::Mesh* potato;
         lithium::Mesh* ocean;
         lithium::Mesh* tiles[numUniqueTiles];
+        lithium::Mesh* grass[numUniqueTiles];
+        lithium::Mesh* trees[numUniqueTiles];
     } _meshes;
 
     struct Textures
     {
         lithium::ImageTexture* permanentMarkerSdf;
         lithium::ImageTexture* blockDiffuse;
-        lithium::ImageTexture* treeDiffuse;
         lithium::ImageTexture* potatoDiffuse;
         lithium::ImageTexture* oceanDiffuse;
         lithium::ImageTexture* dirtDiffuse;
+        lithium::ImageTexture* grassDiffuse;
+        lithium::ImageTexture* treeDiffuse;
     } _textures;
 
     struct Objects
@@ -36,6 +39,8 @@ public:
         lithium::Object* block;
         lithium::Object* ocean;
         lithium::Object* tiles[numUniqueTiles];
+        lithium::Object* grass[numUniqueTiles];
+        lithium::Object* trees[numUniqueTiles];
     } _objects;
 
     struct Fonts

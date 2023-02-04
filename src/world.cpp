@@ -11,9 +11,18 @@ World::World(lithium::RenderPipeline *pipeline)
         for (int tileX = 0; tileX < numWorldTilesX; tileX++) {
             //int idx = std::rand() % numUniqueTiles;
             int idx = (tileX + tileZ) % numUniqueTiles;
-            lithium::Object* block_clone = AssetFactory::getObjects()->tiles[idx]->clone();
-            block_clone->setPosition((tileX - float(numWorldTilesX - 1)/2) * tileSideLength, 0.0, (tileZ - float(numWorldTilesZ - 1)/2) * tileSideLength);
-            pipeline->insertObject(block_clone);
+            float xOffset = (tileX - float(numWorldTilesX - 1)/2) * tileSideLength;
+            float zOffset = (tileZ - float(numWorldTilesZ - 1)/2) * tileSideLength;
+
+            lithium::Object* tile_clone = AssetFactory::getObjects()->tiles[idx]->clone();
+            lithium::Object* grass_clone = AssetFactory::getObjects()->grass[idx]->clone();
+            lithium::Object* tree_close = AssetFactory::getObjects()->trees[idx]->clone();
+            tile_clone->setPosition(xOffset, 0.0, zOffset);
+            grass_clone->setPosition(xOffset, 0.0, zOffset);
+            tree_close->setPosition(xOffset, 0.0, zOffset);
+            pipeline->insertObject(tile_clone);
+            pipeline->insertObject(grass_clone);
+            pipeline->insertObject(tree_close);
         }
     }
     delete block;
