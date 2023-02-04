@@ -54,6 +54,10 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution) : lithium::RenderPipeli
     _orthoCamera->attachShader(_sdfTextShader);
     _orthoCamera->update(0);
 
+    _camera->setPosition(glm::vec3{10.0f, 30.0f, 10.0f});
+    _camera->setTarget(glm::vec3{0.0f});
+
+
     _text = new lithium::Text(AssetFactory::getFonts()->permanentMarker, "Hello ggj2023!", 1.6f);
     //_text->setPosition(800.0f, 400.0f, 0.0f);
     _text->setAlignment(lithium::Text::Alignment::LEFT);
