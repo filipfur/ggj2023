@@ -52,9 +52,9 @@ Pipeline::~Pipeline() noexcept
 
 void Pipeline::update(float dt)
 {
+    lithium::RenderPipeline::update(dt);
     std::for_each(_objects.begin(), _objects.end(), [this, dt](lithium::Object* o) {
         o->update(dt);
-        o->setRotation(o->rotation() + glm::vec3{8.0f * dt});
         return true;
     });
     _camera->update(dt);
@@ -65,15 +65,16 @@ void Pipeline::render()
     setViewportToResolution();
     glClearColor(0.8f, 1.0f, 0.8f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    _blockShader->setUniform("u_view", _camera->view());
-    _borderShader->setUniform("u_view", _camera->view());
+    //_borderShader->setUniform("u_view", _camera->view());
     _screenShader->use();
+    _screenShader->setTime(time());
     _screenMesh->bind();
     glActiveTexture(GL_TEXTURE0);
     glDepthMask(GL_FALSE);
     AssetFactory::getTextures()->treeDiffuse->bind();
     _screenMesh->draw();
     glDepthMask(GL_TRUE);
+    _blockShader->setUniform("u_view", _camera->view());
     std::for_each(_objects.begin(), _objects.end(), [this](lithium::Object* o) {
         o->setScale(1.0f);
         o->setColor(glm::vec3{1.0f, 0.85f, 0.55f});

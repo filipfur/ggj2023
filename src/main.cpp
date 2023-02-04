@@ -42,7 +42,8 @@ public:
             switch(action)
             {
                 case Menu::Action::Connect:
-                    _client = new Client(this);
+                    _client = new Client(this, input());
+                    _client->start();
                     break;
                 case Menu::Action::HostGame:
                     _server = new Server();
@@ -157,7 +158,7 @@ private:
     std::thread* _serverThread{nullptr};
     Character* _characterFactory;
     CollisionSystem _collisionSystem;
-    std::map<uint8_t, Character*> _characters;
+    std::map<uint8_t, Character*> _characters; // clientId, Character*
     Character* _character{nullptr};
 };
 

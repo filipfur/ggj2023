@@ -10,10 +10,20 @@
 #include "collisionsystem.h"
 #include "iclient.h"
 
+#include "glinput.h"
+
 class Client
 {
 public:
-    Client(IClient* iClient) : _iClient{iClient}, _socket{25565}
+    Client(IClient* iClient, lithium::Input* input) : _iClient{iClient}, _socket{25565}
+    {
+        _keyCache = new lithium::Input::KeyCache({GLFW_KEY_SPACE, GLFW_KEY_Q, GLFW_KEY_E, GLFW_KEY_F, GLFW_KEY_G,
+            GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3,
+            GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D});
+        input->setKeyCache(_keyCache);
+    }
+
+    void start()
     {
         _socket.send("Hello world!");
 
@@ -97,7 +107,7 @@ public:
         }
 
         static int sendCounter = 4; // TODO: assesment
-        if(_character && sendCounter-- <= 0)
+        if(sendCounter-- <= 0)
         {
             sendCounter = 4;
             std::lock_guard<std::mutex> lockGuard(_socketMutex);
@@ -143,6 +153,7 @@ public:
 
             if(_keyCache->isPressed(GLFW_KEY_W))
             {
+                std::cout << "W" << std::endl;
                 wasd |= 0b1000;
             }
             if(_keyCache->isPressed(GLFW_KEY_A))
@@ -160,7 +171,7 @@ public:
 
             float force;
             letsgetsocial::ClientInput clientInput;
-            clientInput.clientData = (_character->characterId() << 4) | actionKey;
+            clientInput.clientData = (_clientIdentity.characterId << 4) | actionKey;
             clientInput.control = ((wasd << 4) & 0xF0) | 0/*_character->force()*//*_force*/ & 0xF;
             _socket.send(_endpoint, (char*)&clientInput, sizeof(letsgetsocial::ClientInput));
         }
@@ -174,7 +185,6 @@ public:
     private:
         IClient* _iClient;
         std::unique_ptr<std::thread> _thread;
-        Character* _character{nullptr};
         lithium::Input::KeyCache* _keyCache{nullptr};
         letsgetsocial::Socket _socket;
         letsgetsocial::ClientStateList _clientStates;
