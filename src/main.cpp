@@ -155,6 +155,8 @@ public:
             _client->update(dt);
         }
 
+        _ocean->update(dt);
+
         for(auto it = _characters.begin(); it != _characters.end(); ++it)
         {
             auto character = it->second;

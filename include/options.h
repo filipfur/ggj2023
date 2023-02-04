@@ -21,6 +21,9 @@ static constexpr float cameraOffsetY =  1.0 * tileSideLength;
 static constexpr float cameraOffsetZ = -cameraOffsetY;
 
 static constexpr float oceanYBaseOffset = 0.3;
+static constexpr float tideAmplitude = 3.0;
+static constexpr float tidePeriod = 60.0;
+static constexpr float tideExponent = 4.0;
 
 static constexpr float mainCharacterStartX = 0.0;
 static constexpr float mainCharacterYOffset = 3.0;
