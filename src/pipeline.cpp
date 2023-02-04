@@ -28,7 +28,7 @@ Pipeline::Pipeline(const glm::ivec2& resolution)  : lithium::RenderPipeline{reso
     _borderShader->setUniform("u_texture_0", 0);
     _borderShader->setUniform("u_projection", _camera->projection());
     _screenShader = new lithium::ShaderProgram("shaders/screenshader.vert", "shaders/screenshader.frag");
-    _object = AssetFactory::getObjects()->potato->clone();
+    _object = AssetFactory::getObjects()->tile1->clone();
     _object->setPosition(glm::vec3{0.0f});
     insertObject(_object->clone());
     _camera->setPosition(glm::vec3{3.0f, 3.0f, 3.0f});

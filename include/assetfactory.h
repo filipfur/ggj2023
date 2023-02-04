@@ -15,6 +15,7 @@ public:
         lithium::Mesh* screen;
         lithium::Mesh* block;
         lithium::Mesh* potato;
+        lithium::Mesh* tile1;
     } _meshes;
 
     struct Textures
@@ -23,12 +24,14 @@ public:
         lithium::ImageTexture* blockDiffuse;
         lithium::ImageTexture* treeDiffuse;
         lithium::ImageTexture* potatoDiffuse;
+        lithium::ImageTexture* dirtDiffuse;
     } _textures;
 
     struct Objects
     {
         lithium::Object* potato;
         lithium::Object* block;
+        lithium::Object* tile1;
     } _objects;
 
     struct Fonts
