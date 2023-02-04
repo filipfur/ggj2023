@@ -49,7 +49,7 @@ public:
         lithium::Font* permanentMarker;
     } _fonts;
 
-    MapSegment* mapSegments[numUniqueTiles];
+    MapSegment* _mapSegments[numUniqueTiles];
 
     AssetFactory();
     virtual ~AssetFactory() noexcept;
@@ -70,6 +70,7 @@ public:
     static const AssetFactory::Textures* getTextures();
     static const AssetFactory::Objects* getObjects();
     static const AssetFactory::Fonts* getFonts();
+    static MapSegment** getMapSegments();
 
     gltf::Loader _gltfLoader;
 };

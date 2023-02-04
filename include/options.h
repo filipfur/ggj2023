@@ -34,6 +34,8 @@ static constexpr float mainCharacterStartX = 0.0;
 static constexpr float mainCharacterYOffset = 3.0;
 static constexpr float mainCharacterStartZ = 0.0;
 
+static constexpr float heightDisparityDecaySpeed = 16.0;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // DERIVED CONSTANTS
@@ -41,3 +43,6 @@ static constexpr float mainCharacterStartZ = 0.0;
 
 static constexpr unsigned int heightMapResolution = numMeshSubdivisionsPerTileSide + 1;
 static constexpr float meshSubdivisionsSideLength = tileSideLength / numMeshSubdivisionsPerTileSide;
+
+static const float worldSizeX = numWorldTilesX * tileSideLength;
+static const float worldSizeZ = numWorldTilesZ * tileSideLength;

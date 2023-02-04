@@ -40,7 +40,7 @@ void AssetFactory::loadMeshes()
         std::string numString = std::to_string(idx + 1);
         std::vector<glm::vec3> vertexPositions;
         instance._meshes.tiles[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/tile" + numString + ".obj").c_str(), AssetFactory::objectAttributes, glm::vec2{1.0f}, &vertexPositions);
-        instance.mapSegments[idx] = new MapSegment(vertexPositions);
+        instance._mapSegments[idx] = new MapSegment(vertexPositions);
         instance._meshes.grass[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/grassTile" + numString + ".obj").c_str(), AssetFactory::objectAttributes);
         instance._meshes.trees[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/treeTile" + numString + ".obj").c_str(), AssetFactory::objectAttributes);
     }
@@ -95,6 +95,10 @@ const AssetFactory::Objects* AssetFactory::getObjects()
 const AssetFactory::Fonts* AssetFactory::getFonts()
 {
     return &AssetFactory::getInstance()._fonts;
+}
+
+MapSegment** AssetFactory::getMapSegments() {
+    return AssetFactory::getInstance()._mapSegments;
 }
 
 AssetFactory& AssetFactory::getInstance()

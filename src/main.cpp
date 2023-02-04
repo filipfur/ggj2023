@@ -207,10 +207,12 @@ public:
         {
             auto character = it->second;
             character->update(dt);
-            if(character == _character)
-            {
-                glm::vec3 p = character->position();
-            }
+
+            // Update character elevation
+            float sourceElevation = character->height();
+            float targetElevation = _world->getElevation(character->position());
+            character->setHeight(sourceElevation + (targetElevation - sourceElevation)*heightDisparityDecaySpeed*dt);
+
             glm::vec2 normal;
             if(_collisionSystem.checkCollision2D(*_character->boundingBox(), normal))
             {
