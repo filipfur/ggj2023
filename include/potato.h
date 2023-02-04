@@ -76,7 +76,7 @@ public:
                 _potato->setAnimation("Dig");
                 break;
             case 0xF: // Death
-                _potato->setAnimation("Death.001");
+                _potato->setAnimation("Dig");
                 break;
         }
     }

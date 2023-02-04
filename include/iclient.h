@@ -15,6 +15,8 @@ public:
 
     virtual float playerToMouseAngle() const = 0;
 
+    virtual float playerElevation() const  =0;
+
 private:
 
 };

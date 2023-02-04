@@ -132,6 +132,11 @@ public:
         return (_clientInput->control >> 4) & 0xF;
     }
 
+    float elevation() const
+    {
+        return _clientInput->elevation;
+    }
+
     uint8_t characterId() const
     {
         return _characterId; // (_clientInput->clientData >> 4) & 0xF;

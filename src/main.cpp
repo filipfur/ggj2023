@@ -177,6 +177,11 @@ public:
         return utility::angle(_character->position(), mouseToWorldCoordinates());
     }
 
+    virtual float playerElevation() const override
+    {
+        return _character->height();
+    }
+
     virtual void update(float dt) override
     {
         if(_client)
@@ -195,8 +200,10 @@ public:
         {
             glClear(GL_DEPTH_BUFFER_BIT);
             glActiveTexture(GL_TEXTURE0);
-            AssetFactory::getObjects()->ocean->shade(_zShader);
-            AssetFactory::getObjects()->ocean->draw();
+            static auto oc = AssetFactory::getObjects()->ocean->clone();
+            oc->setScale(glm::vec3{oceanSideLengthX / oceanMeshSideLength, 1.0, oceanSideLengthZ / oceanMeshSideLength});
+            oc->shade(_zShader);
+            oc->draw();
             glm::vec2 mp = input()->mousePosition(); // Default frame buffer resolution == LITHIUM_VIEWER_WIDTH ?
             //glReadBuffer(GL_DEPTH_ATTACHMENT);
             glReadPixels( mp.x, defaultFrameBufferResolution().y - mp.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &_winZ );

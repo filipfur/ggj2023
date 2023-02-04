@@ -143,7 +143,7 @@ public:
             ClientSession& cs = entry.second;
 
             float lastX = cs.clientState()->xrz.x;
-            float lastY = 0.0f;
+            float lastY = cs.elevation();
             float lastZ = cs.clientState()->xrz.z;
             if(yOffset - lastY > 2.0f)
             {

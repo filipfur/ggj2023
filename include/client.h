@@ -187,6 +187,7 @@ public:
             _aimDirection = _iClient->playerToMouseAngle();
             clientInput.aimDirection = glm::degrees(_aimDirection);
             clientInput.control = ((wasd << 4) & 0xF0) | 0/*_character->force()*//*_force*/ & 0xF;
+            clientInput.elevation = _iClient->playerElevation();
             _socket.send(_endpoint, (char*)&clientInput, sizeof(letsgetsocial::ClientInput));
         }
     }
