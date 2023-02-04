@@ -1,11 +1,11 @@
 #pragma once
 
-#include "pipeline.h"
+#include "basepipeline.h"
 
 class Ocean
 {
 public:
-    Ocean(Pipeline* pipeline);
+    Ocean(BasePipeline* pipeline);
 
 private:
     lithium::Object* oceanObject{nullptr};

@@ -2,7 +2,7 @@
 #include "lgscore.h"
 
 #include "glapplication.h"
-#include "pipeline.h"
+#include "cartoonshading.h"
 #include "assetfactory.h"
 #include "world.h"
 #include "menu.h"
@@ -25,8 +25,14 @@ public:
         AssetFactory::loadTextures();
         AssetFactory::loadObjects();
         AssetFactory::loadFonts();
-        _characterFactory = new Potato(AssetFactory::getObjects()->potato);
-        _pipeline = new Pipeline(defaultFrameBufferResolution());
+        _potatoFactory = new Potato(AssetFactory::getObjects()->potato);
+        _pipeline = new CartoonShading(defaultFrameBufferResolution());
+        auto light = new lithium::Light(AssetFactory::getMeshes()->screen);
+        //light->setTexture(bulbTexture);
+        light->setColor(glm::vec4(0.96f, 0.86f, 0.82f, 1.0f));
+        light->setPosition(glm::vec3{8.0f, 24.0f, 8.0f});
+        light->setScale(0.8);
+        _pipeline->setLight(light);
         _world = new World(_pipeline);
         _ocean = new Ocean(_pipeline);
         _menu = new Menu(_pipeline);
@@ -49,6 +55,7 @@ public:
                     break;
                 case Menu::Action::HostGame:
                     _server = new Server();
+                    //_server->serve();
                     _serverThread = new std::thread(serverThreadFunc, _server);
                     std::cout << "Started server." << std::endl;
                     break;
@@ -121,12 +128,13 @@ public:
     {
         Character* character{nullptr};
 
-        switch(characterId)
+        /*switch(characterId)
         {
         case 0x1:
-            character = _characterFactory->spawn(clientId);
+            character = _potatoFactory->spawn(clientId);
             break;
-        }
+        }*/
+        character = _potatoFactory->spawn(clientId);
 
         std::vector<lithium::Object*> objects;
         character->getObjects(objects);
@@ -146,20 +154,41 @@ public:
         {
             _client->update(dt);
         }
+
+        for(auto it = _characters.begin(); it != _characters.end(); ++it)
+        {
+            auto character = it->second;
+            character->update(dt);
+            if(character == _character)
+            {
+                glm::vec3 p = character->position();
+            }
+            glm::vec2 normal;
+            if(_collisionSystem.checkCollision2D(*_character->boundingBox(), normal))
+            {
+                //std::cout << "colliding!!" << std::endl;
+            }
+        }
+
         _pipeline->update(dt);
         _pipeline->render();
         _menu->render();
+        if(_server != nullptr)
+        {
+            _pipeline->textColor(glm::vec3{1.0f, 1.0f, 0.0f});
+            _pipeline->renderText(600.0f, 600.0f, "SERVING");
+        }
     }
     
 private:
-    Pipeline* _pipeline{nullptr};
+    CartoonShading* _pipeline{nullptr};
     World* _world{nullptr};
     Ocean* _ocean{nullptr};
     Menu* _menu{nullptr};
     Client* _client{nullptr};
     Server* _server{nullptr};
     std::thread* _serverThread{nullptr};
-    Character* _characterFactory;
+    Potato* _potatoFactory{nullptr};
     CollisionSystem _collisionSystem;
     std::map<uint8_t, Character*> _characters; // clientId, Character*
     Character* _character{nullptr};

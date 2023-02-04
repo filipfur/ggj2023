@@ -17,7 +17,7 @@
 class Server
 {
 public:
-    Server() : _socket{25565}, _clientInputs{}, _clientStateList{}
+    Server() : _socket{25563}, _clientInputs{}, _clientStateList{}
     {
         memset(&_clientStateList, 0, sizeof(letsgetsocial::ClientStateList));
         _clientStateList.messageType = letsgetsocial::MESSAGE_CLIENT_STATE;

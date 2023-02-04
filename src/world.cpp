@@ -1,11 +1,10 @@
 #include <cstdlib>
 
 #include "world.h"
-#include "pipeline.h"
 #include "assetfactory.h"
 #include "options.h"
 
-World::World(Pipeline *pipeline)
+World::World(lithium::RenderPipeline *pipeline)
 {
     lithium::Object* block = AssetFactory::getObjects()->tiles[0];
     for (int tileZ = 0; tileZ < numWorldTilesZ; tileZ++) {

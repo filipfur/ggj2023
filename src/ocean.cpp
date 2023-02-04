@@ -1,11 +1,10 @@
 #include <cstdlib>
 
 #include "ocean.h"
-#include "pipeline.h"
 #include "assetfactory.h"
 #include "options.h"
 
-Ocean::Ocean(Pipeline *pipeline)
+Ocean::Ocean(BasePipeline *pipeline)
 {
     oceanObject = AssetFactory::getObjects()->ocean->clone();
     oceanObject->setPosition(0.0, oceanYBaseOffset, 0.0);

@@ -15,7 +15,7 @@
 class Client
 {
 public:
-    Client(IClient* iClient, lithium::Input* input) : _iClient{iClient}, _socket{25565}
+    Client(IClient* iClient, lithium::Input* input) : _iClient{iClient}, _socket{25563}
     {
         _keyCache = new lithium::Input::KeyCache({GLFW_KEY_SPACE, GLFW_KEY_Q, GLFW_KEY_E, GLFW_KEY_F, GLFW_KEY_G,
             GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3,
@@ -25,7 +25,18 @@ public:
 
     void start()
     {
+        _socket.setNonBlockingReceive();
+        std::ifstream ifs{"./server.txt"};
+        if(ifs)
+        {
+            std::string inetAddr;
+            std::getline(ifs, inetAddr);
+            _socket.setInetAddr(inetAddr);
+        }
+
         _socket.send("Hello world!");
+
+        std::this_thread::sleep_for(std::chrono::milliseconds{1000});
 
         _socket.receive();
         _endpoint = _socket.endpoint();
@@ -153,7 +164,6 @@ public:
 
             if(_keyCache->isPressed(GLFW_KEY_W))
             {
-                std::cout << "W" << std::endl;
                 wasd |= 0b1000;
             }
             if(_keyCache->isPressed(GLFW_KEY_A))

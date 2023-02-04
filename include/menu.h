@@ -3,7 +3,7 @@
 
 #include "glmenu.h"
 #include "glmenuitem.h"
-#include "pipeline.h"
+#include "basepipeline.h"
 
 class Menu : public lithium::Menu
 {
@@ -17,12 +17,12 @@ public:
         Exit
     };
 
-    Menu(Pipeline* pipeline);
+    Menu(BasePipeline* pipeline);
     virtual ~Menu() noexcept;
 
     void render();
 
 private:
-    Pipeline* _pipeline{nullptr};
+    BasePipeline* _pipeline{nullptr};
 
 };

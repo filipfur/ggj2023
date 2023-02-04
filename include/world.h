@@ -1,12 +1,12 @@
 #pragma once
 
-#include "pipeline.h"
+#include "glrenderpipeline.h"
 #include "tile.h"
 
 class World
 {
 public:
-    World(Pipeline* pipeline);
+    World(lithium::RenderPipeline* pipeline);
 
 private:
 };

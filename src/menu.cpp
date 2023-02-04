@@ -1,6 +1,6 @@
 #include "menu.h"
 
-Menu::Menu(Pipeline* pipeline) : _pipeline{pipeline}, lithium::Menu("Root Suckers", {
+Menu::Menu(BasePipeline* pipeline) : _pipeline{pipeline}, lithium::Menu("Root Suckers", {
     (new lithium::MenuItem("Connect"))->setActionId(static_cast<int>(Action::Connect)),
     (new lithium::MenuItem("Host game (local)"))->setActionId(static_cast<int>(Action::HostGame)),
     (new lithium::MenuItem("Options"))->setActionId(static_cast<int>(Action::Options)),
