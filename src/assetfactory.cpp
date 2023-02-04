@@ -60,7 +60,7 @@ void AssetFactory::loadObjects()
 {
     AssetFactory& instance = getInstance();
     instance._objects.block = new lithium::Object(instance._meshes.block, instance._textures.blockDiffuse);
-    instance._objects.potato = new lithium::Object(instance._meshes.potato, instance._textures.potatoDiffuse);
+    instance._objects.potato =  instance._gltfLoader.loadSkinnedObject("assets/player/Player.gltf"); //new lithium::Object(instance._meshes.potato, instance._textures.potatoDiffuse);
     instance._objects.ocean = new lithium::Object(instance._meshes.ocean, instance._textures.oceanDiffuse);
     for (int idx = 0; idx < numUniqueTiles; idx++) {
         instance._objects.tiles[idx] = new lithium::Object(instance._meshes.tiles[idx], instance._textures.dirtDiffuse);

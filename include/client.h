@@ -31,6 +31,7 @@ public:
         {
             std::string inetAddr;
             std::getline(ifs, inetAddr);
+            std::cout << "inetAddr=" << inetAddr << std::endl;
             _socket.setInetAddr(inetAddr);
         }
 
@@ -123,8 +124,6 @@ public:
             sendCounter = 4;
             std::lock_guard<std::mutex> lockGuard(_socketMutex);
 
-            //glm::vec3 cursorPos{mouseToWorldCoordinates()};
-
             uint8_t wasd{0};
             uint8_t actionKey{0};
 
@@ -182,6 +181,9 @@ public:
             float force;
             letsgetsocial::ClientInput clientInput;
             clientInput.clientData = (_clientIdentity.characterId << 4) | actionKey;
+            
+            _aimDirection = _iClient->playerToMouseAngle();
+            clientInput.aimDirection = glm::degrees(_aimDirection);
             clientInput.control = ((wasd << 4) & 0xF0) | 0/*_character->force()*//*_force*/ & 0xF;
             _socket.send(_endpoint, (char*)&clientInput, sizeof(letsgetsocial::ClientInput));
         }
@@ -192,6 +194,11 @@ public:
         return _clientIdentity.clientId;
     }
 
+    float aimDirection() const
+    {
+        return _aimDirection;
+    }
+
     private:
         IClient* _iClient;
         std::unique_ptr<std::thread> _thread;
@@ -200,6 +207,7 @@ public:
         letsgetsocial::ClientStateList _clientStates;
         letsgetsocial::ClientStateList _clientStatesTemporary;
         letsgetsocial::ClientStateList _clientStatesCopy;
+        float _aimDirection{0.0f};
         bool _clientStateUpdated{false};
         letsgetsocial::ClientIdentity _clientIdentity;
         SOCKADDR_IN _endpoint;

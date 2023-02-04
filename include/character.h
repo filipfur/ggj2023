@@ -197,7 +197,7 @@ protected:
     virtual void onServerUpdate(uint8_t state, uint8_t health, const glm::vec3& position, const glm::vec3& delta,
         float direction, float aimDirection, float speed, float deltaRotation)
     {
-
+        _state = state;
     }
 
     uint8_t _force{0};
@@ -205,6 +205,7 @@ protected:
     float _speed{0.0f};
     float _direction{0.0f};
     MoveState _moveState{MoveState::Idle};
+    uint8_t _state{0x0};
 
 private:
     glm::vec3 _targetPosition{0.0f};

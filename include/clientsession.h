@@ -158,6 +158,7 @@ private:
     uint8_t _health{2};
     uint8_t _state{0};
     uint8_t _characterId{0};
+    bool _moveable{true};
     static constexpr float _respawnTime{5.0f};
     float _respawnTimer{_respawnTime};
 };

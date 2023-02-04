@@ -27,6 +27,19 @@ public:
         AssetFactory::loadFonts();
         _potatoFactory = new Potato(AssetFactory::getObjects()->potato);
         _pipeline = new CartoonShading(defaultFrameBufferResolution());
+        
+        _zShader = new lithium::ShaderProgram( "shaders/shadowdepth.vert", "shaders/shadowdepth.frag" );
+        _zBuffer = new lithium::FrameBuffer(defaultFrameBufferResolution());
+        _zBuffer->bind();
+            _zBuffer->createTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_NEAREST, GL_CLAMP_TO_BORDER);
+            glDrawBuffer(GL_NONE);
+            glReadBuffer(GL_NONE);
+            _zBuffer->bindTexture(GL_DEPTH_ATTACHMENT);
+            //float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+            //glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+            //glBindTexture(GL_TEXTURE_2D, 0);
+        _zBuffer->unbind();
+
         auto light = new lithium::Light(AssetFactory::getMeshes()->screen);
         //light->setTexture(bulbTexture);
         light->setColor(glm::vec4(0.96f, 0.86f, 0.82f, 1.0f));
@@ -52,6 +65,7 @@ public:
                 case Menu::Action::Connect:
                     _client = new Client(this, input());
                     _client->start();
+                    _showMenu = false;
                     break;
                 case Menu::Action::HostGame:
                     _server = new Server();
@@ -148,6 +162,21 @@ public:
         return character;
     }
 
+    glm::vec3 mouseToWorldCoordinates() const
+    {
+        static glm::vec4 viewport{0.0f, 0.0f, defaultFrameBufferResolution()};
+        glm::vec2 mousePos = input()->mousePosition();
+        glm::vec3 screenPos = glm::vec3(mousePos.x, viewport.w - mousePos.y, _winZ);
+        //glm::mat4 _view = glm::lookAt(_camera->position(), _camera->target(), glm::vec3{0.0f, 1.0f, 0.0f});
+        //glm::mat4 modelView = _view;
+        return glm::unProject(screenPos, _pipeline->camera()->view(), _pipeline->camera()->projection(), viewport);
+    }
+
+    float playerToMouseAngle() const
+    {
+        return utility::angle(_character->position(), mouseToWorldCoordinates());
+    }
+
     virtual void update(float dt) override
     {
         if(_client)
@@ -156,6 +185,20 @@ public:
         }
 
         _ocean->update(dt);
+
+        glm::mat4 viewProj = _pipeline->camera()->projection() * _pipeline->camera()->view();
+        _zShader->setUniform("u_view", viewProj);
+        _zBuffer->bind();
+        {
+            glClear(GL_DEPTH_BUFFER_BIT);
+            glActiveTexture(GL_TEXTURE0);
+            AssetFactory::getObjects()->ocean->shade(_zShader);
+            AssetFactory::getObjects()->ocean->draw();
+            glm::vec2 mp = input()->mousePosition(); // Default frame buffer resolution == LITHIUM_VIEWER_WIDTH ?
+            //glReadBuffer(GL_DEPTH_ATTACHMENT);
+            glReadPixels( mp.x, defaultFrameBufferResolution().y - mp.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &_winZ );
+        }
+        _zBuffer->unbind();
 
         for(auto it = _characters.begin(); it != _characters.end(); ++it)
         {
@@ -180,11 +223,11 @@ public:
 
         _pipeline->update(dt);
         _pipeline->render();
-        _menu->render();
+        if(_showMenu) { _menu->render(); }
         if(_server != nullptr)
         {
-            _pipeline->textColor(glm::vec3{1.0f, 1.0f, 0.0f});
-            _pipeline->renderText(600.0f, 600.0f, "SERVING");
+            //_pipeline->textColor(glm::vec3{1.0f, 1.0f, 0.0f});
+            //_pipeline->renderText(600.0f, 600.0f, "SERVING");
         }
     }
     
@@ -198,8 +241,12 @@ private:
     std::thread* _serverThread{nullptr};
     Potato* _potatoFactory{nullptr};
     CollisionSystem _collisionSystem;
+    bool _showMenu{true};
     std::map<uint8_t, Character*> _characters; // clientId, Character*
     Character* _character{nullptr};
+    float _winZ;
+    lithium::ShaderProgram* _zShader{nullptr};
+    lithium::FrameBuffer *_zBuffer{nullptr};
 };
 
 void init()

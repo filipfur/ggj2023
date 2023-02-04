@@ -56,11 +56,48 @@ void ClientSession::update(float dt)
                         handleMonarchAction(aId);
                         break;
                 }*/
+                float stateDuration = 0.0f;
+                switch(aId)
+                {
+                    case letsgetsocial::ACTION_KEY_SPACE:
+                        _state = 0x1;
+                        stateDuration = 1.0f;
+                        /*_scheduledTasks.push_back(ScheduledTask{0.800f, [this](){
+                            
+                        }});*/
+                        break;
+                    case letsgetsocial::ACTION_KEY_Q:
+                        _state = 0x2;
+                        //stateDuration = 1.0f;
+                        _moveable = false;
+                        _scheduledTasks.push_back(ScheduledTask{1.5f, [this](){
+                            _moveable = true;
+                        }});
+                        return;
+                        break;
+                }
+                if(stateDuration == 0.0f)
+                {
+                    _state = 0x0;
+                }
+                else
+                {
+                    _scheduledTasks.push_back(ScheduledTask{stateDuration, [this](){
+                        _state = 0x0;
+                    }});
+                }
             }
             else if(aId > 0x9)
             {
                 std::cout << "Setting character id: " << (int)(aId - 0x9) << std::endl;
                 setCharacterId(aId - 0x9);
+            }
+        }
+        else if(_state == 0x2)
+        {
+            if(_moveable && (delta.x != 0.0f || delta.z != 0.0f))
+            {
+                _state = 0x0;
             }
         }
     }

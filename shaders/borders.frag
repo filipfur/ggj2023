@@ -58,11 +58,11 @@ vec4 SobelSample(in sampler2D t, in vec2 uv, in vec3 offset)
             abs(pixelDown - pixelCenter);
 }
 
-const float outlineThickness = 1.0;
+const float outlineThickness = 1.4;
 const float outlineDensity = 1.0;
 
-const float outlineDepthMultiplier = 0.99;
-const float outlineDepthBias = 15.0;
+const float outlineDepthMultiplier = 0.79;
+const float outlineDepthBias = 0.35;
 
 const float outlineNormalMultiplier = 0.8;
 const float outlineNormalBias = 1.0;
@@ -108,7 +108,7 @@ void main()
         sobelOutline = smoothstep(0.9, 1.0, sobelOutline) * alpha;
     }
 
-    float exposure = 5.0;
+    float exposure = 1.6;
 
     vec3 color = mix(diffuse + bright, vec3(0.0, 0.0, 0.0), sobelDepth * 1.0);
     // exposure tone mapping

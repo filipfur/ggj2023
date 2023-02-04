@@ -11,6 +11,10 @@ public:
 
     virtual void onReceivedFromServer(uint8_t clientId, uint8_t characterId, uint8_t health, uint8_t state, float force, float aimDirection, const glm::vec3& xrz) = 0;
 
+    virtual glm::vec3 mouseToWorldCoordinates() const = 0;
+
+    virtual float playerToMouseAngle() const = 0;
+
 private:
 
 };

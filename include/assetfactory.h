@@ -35,7 +35,7 @@ public:
 
     struct Objects
     {
-        lithium::Object* potato;
+        lithium::SkinnedObject* potato;
         lithium::Object* block;
         lithium::Object* ocean;
         lithium::Object* tiles[numUniqueTiles];
