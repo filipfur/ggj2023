@@ -170,6 +170,12 @@ public:
             }
         }
 
+        lithium::SimpleCamera* camera = _pipeline->camera();
+        if (_character) {
+            camera->setTarget(_character->position());
+        }
+        camera->setPosition(camera->target() + glm::vec3{cameraOffsetX, cameraOffsetY, cameraOffsetZ});
+
         _pipeline->update(dt);
         _pipeline->render();
         _menu->render();

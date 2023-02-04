@@ -17,8 +17,8 @@ static constexpr float oceanSideLengthX = numWorldTilesX * tileSideLength;
 static constexpr float oceanSideLengthZ = numWorldTilesZ * tileSideLength;
 
 static constexpr float cameraOffsetX =  0.0 * tileSideLength;
-static constexpr float cameraOffsetY =  3.0 * tileSideLength;
-static constexpr float cameraOffsetZ = -3.0 * tileSideLength;
+static constexpr float cameraOffsetY =  1.0 * tileSideLength;
+static constexpr float cameraOffsetZ = -cameraOffsetY;
 
 static constexpr float oceanYBaseOffset = 0.3;
 
