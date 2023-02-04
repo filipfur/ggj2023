@@ -34,8 +34,11 @@ void AssetFactory::loadMeshes()
         0, 3, 2
     });
     instance._meshes.block = lithium::tinyobjloader_load("assets/block.obj", AssetFactory::objectAttributes);
-    instance._meshes.tile1 = lithium::tinyobjloader_load("assets/tile1/tiles1.obj", AssetFactory::objectAttributes);
     instance._meshes.potato = lithium::tinyobjloader_load("assets/player/PlayerStatic.obj", AssetFactory::objectAttributes);
+    for (int idx = 0; idx < numUniqueTiles; idx++) {
+        std::string numString = std::to_string(idx + 1);
+        instance._meshes.tiles[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/tiles" + numString + ".obj").c_str(), AssetFactory::objectAttributes);
+    }
 }
 
 void AssetFactory::loadTextures()
@@ -53,7 +56,9 @@ void AssetFactory::loadObjects()
     AssetFactory& instance = getInstance();
     instance._objects.block = new lithium::Object(instance._meshes.block, instance._textures.blockDiffuse);
     instance._objects.potato = new lithium::Object(instance._meshes.potato, instance._textures.potatoDiffuse);
-    instance._objects.tile1 = new lithium::Object(instance._meshes.tile1, instance._textures.dirtDiffuse);
+    for (int idx = 0; idx < numUniqueTiles; idx++) {
+        instance._objects.tiles[idx] = new lithium::Object(instance._meshes.tiles[idx], instance._textures.dirtDiffuse);
+    }
 }
 
 void AssetFactory::loadFonts()

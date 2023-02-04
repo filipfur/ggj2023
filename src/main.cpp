@@ -1,3 +1,4 @@
+#include "options.h"
 #include "lgscore.h"
 
 #include "glapplication.h"
@@ -174,6 +175,8 @@ void init()
 
 int main(int argc, const char* argv[])
 {
+    std::srand(randomSeed);
+
     init();
     App* app = new App();
     app->run();

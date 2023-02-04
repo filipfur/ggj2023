@@ -9,5 +9,4 @@ public:
     World(Pipeline* pipeline);
 
 private:
-
 };

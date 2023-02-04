@@ -6,6 +6,7 @@
 #include "gltinyobjloader.h"
 #include "gltfloader.h"
 #include "glskinnedobject.h"
+#include "options.h"
 
 class AssetFactory
 {
@@ -15,7 +16,7 @@ public:
         lithium::Mesh* screen;
         lithium::Mesh* block;
         lithium::Mesh* potato;
-        lithium::Mesh* tile1;
+        lithium::Mesh* tiles[numUniqueTiles];
     } _meshes;
 
     struct Textures
@@ -31,7 +32,7 @@ public:
     {
         lithium::Object* potato;
         lithium::Object* block;
-        lithium::Object* tile1;
+        lithium::Object* tiles[numUniqueTiles];
     } _objects;
 
     struct Fonts
