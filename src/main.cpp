@@ -184,7 +184,10 @@ public:
             _client->update(dt);
         }
 
-        _ocean->update(dt);
+        if(_client)
+        {
+            _ocean->updateTime(_client->serverTime());
+        }
 
         glm::mat4 viewProj = _pipeline->camera()->projection() * _pipeline->camera()->view();
         _zShader->setUniform("u_view", viewProj);

@@ -137,12 +137,18 @@ public:
 
     void update(float dt)
     {
+        float yOffset = oceanYBaseOffset + tideAmplitude * glm::pow((1 - cos(_serverTime / tidePeriod * 2 * 3.14157))/2, tideExponent);
         for(auto&& entry : _clientSessions)
         {
             ClientSession& cs = entry.second;
 
             float lastX = cs.clientState()->xrz.x;
+            float lastY = 0.0f;
             float lastZ = cs.clientState()->xrz.z;
+            if(yOffset - lastY > 2.0f)
+            {
+                cs.setHealth(0);
+            }
             cs.update(dt);
             auto bb = cs.boundingBox();
             bb->setPosition(glm::vec3{cs.clientState()->xrz.x, 0.0f, cs.clientState()->xrz.z});
@@ -164,6 +170,8 @@ public:
             }
             cs.updateClientData();
         }
+        _serverTime += dt;
+        _clientStateList.time = _serverTime;
     }
 
 private:
@@ -187,4 +195,5 @@ private:
     std::chrono::steady_clock::time_point _startServer;
     CollisionSystem _collisionSystem;
     gltf::Loader _gltfLoader;
+    float _serverTime{0.0f};
 };

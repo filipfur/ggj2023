@@ -202,6 +202,7 @@ namespace letsgetsocial
         uint8_t clientData; // [CharacterId : ActionId]
         uint8_t control; // W A S D | force;
         float aimDirection;
+        float elevation;
     };
 
     struct ClientState
@@ -218,7 +219,8 @@ namespace letsgetsocial
         uint8_t extra0;
         uint8_t extra1;
         uint8_t extra2;
-        int events[MAX_PROJECTILES]; // [ ClientId : InstanceType | InstanceId | Force : DirectionHi | DirectionL ]
+        //int events[MAX_PROJECTILES]; // [ ClientId : InstanceType | InstanceId | Force : DirectionHi | DirectionL ]
+        float time;
         ClientState clientStates[letsgetsocial::MAX_CLIENTS];
     };
 

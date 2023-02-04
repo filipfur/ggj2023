@@ -17,6 +17,7 @@ void ClientSession::update(float dt)
     glm::vec3 delta{wasdToDelta(wasd())};
     if(dead())
     {
+        _state = 0xF;
         waitToRespawn(dt, 2);
     }
     else
@@ -95,7 +96,7 @@ void ClientSession::update(float dt)
         }
         else if(_state == 0x2)
         {
-            if(_moveable && (delta.x != 0.0f || delta.z != 0.0f))
+            if(_moveable && (delta.x * delta.x > 0.01f || delta.z * delta.z > 0.01f))
             {
                 _state = 0x0;
             }

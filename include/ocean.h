@@ -2,12 +2,12 @@
 
 #include "basepipeline.h"
 
-class Ocean : public lithium::Updateable
+class Ocean
 {
 public:
     Ocean(BasePipeline* pipeline);
 
-    virtual void update(float dt) override;
+    void updateTime(float t);
 
 private:
     lithium::Object* _oceanObject{nullptr};

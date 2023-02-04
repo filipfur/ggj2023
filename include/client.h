@@ -106,6 +106,8 @@ public:
                     continue;
                 }
 
+                //std::cout << "server time: " << _clientStatesCopy.time << std::endl;
+
                 uint8_t characterId = (clientData >> 28) & 0xF;
 
                 uint8_t health = (clientData >> 16) & 0xFF;
@@ -197,6 +199,11 @@ public:
     float aimDirection() const
     {
         return _aimDirection;
+    }
+
+    float serverTime() const
+    {
+        return _clientStatesCopy.time;
     }
 
     private:

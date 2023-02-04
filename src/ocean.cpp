@@ -17,10 +17,8 @@ Ocean::Ocean(BasePipeline *pipeline)
     dynamic_cast<CartoonShading*>(pipeline)->setOcean(_oceanObject);
 }
 
-void Ocean::update(float dt)
+void Ocean::updateTime(float t)
 {
-    lithium::Updateable::update(dt);
-
-    float yOffset = oceanYBaseOffset + tideAmplitude * glm::pow((1 - cos(time() / tidePeriod * 2 * M_PI))/2, tideExponent);
+    float yOffset = oceanYBaseOffset + tideAmplitude * glm::pow((1 - cos(t / tidePeriod * 2 * M_PI))/2, tideExponent);
     _oceanObject->setPosition(0.0, yOffset, 0.0);
 }

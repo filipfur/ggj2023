@@ -108,6 +108,7 @@ public:
             _clientState->xrz.x = (rand() % 96) - 48;
             _clientState->xrz.z = (rand() % 96) - 48;
             _respawnTimer = _respawnTime;
+            _state = 0x0;
         }
     }
 
