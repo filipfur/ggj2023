@@ -6,6 +6,7 @@
 #include "gltinyobjloader.h"
 #include "gltfloader.h"
 #include "glskinnedobject.h"
+#include "mapsegment.h"
 #include "options.h"
 
 class AssetFactory
@@ -47,6 +48,8 @@ public:
     {
         lithium::Font* permanentMarker;
     } _fonts;
+
+    MapSegment* mapSegments[numUniqueTiles];
 
     AssetFactory();
     virtual ~AssetFactory() noexcept;

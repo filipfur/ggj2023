@@ -1,5 +1,9 @@
 #pragma once
 
+////////////////////////////////////////////////////////////////////////////////
+// OPTIONS
+////////////////////////////////////////////////////////////////////////////////
+
 static constexpr int randomSeed = 0;
 
 static constexpr unsigned int numWorldTilesX = 11;
@@ -11,6 +15,7 @@ static constexpr float zNear = 0.1;
 static constexpr float zFar = 1000.0;
 
 static constexpr float tileSideLength = 30.0;
+static constexpr unsigned int numMeshSubdivisionsPerTileSide = 16;
 
 static constexpr float oceanMeshSideLength = 100.0;
 static constexpr float oceanSideLengthX = numWorldTilesX * tileSideLength;
@@ -28,3 +33,11 @@ static constexpr float tideExponent = 4.0;
 static constexpr float mainCharacterStartX = 0.0;
 static constexpr float mainCharacterYOffset = 3.0;
 static constexpr float mainCharacterStartZ = 0.0;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// DERIVED CONSTANTS
+////////////////////////////////////////////////////////////////////////////////
+
+static constexpr unsigned int heightMapResolution = numMeshSubdivisionsPerTileSide + 1;
+static constexpr float meshSubdivisionsSideLength = tileSideLength / numMeshSubdivisionsPerTileSide;
