@@ -12,9 +12,15 @@ static constexpr float zFar = 1000.0;
 
 static constexpr float tileSideLength = 30.0;
 
+static constexpr float oceanMeshSideLength = 100.0;
+static constexpr float oceanSideLengthX = numWorldTilesX * tileSideLength;
+static constexpr float oceanSideLengthZ = numWorldTilesZ * tileSideLength;
+
 static constexpr float cameraOffsetX =  0.0 * tileSideLength;
 static constexpr float cameraOffsetY =  3.0 * tileSideLength;
 static constexpr float cameraOffsetZ = -3.0 * tileSideLength;
+
+static constexpr float oceanYBaseOffset = 0.3;
 
 static constexpr float mainCharacterStartX = 0.0;
 static constexpr float mainCharacterYOffset = 3.0;

@@ -9,6 +9,7 @@
 #include "server.h"
 #include "client.h"
 #include "potato.h"
+#include "ocean.h"
 
 void serverThreadFunc(Server* server)
 {
@@ -27,6 +28,7 @@ public:
         _characterFactory = new Potato(AssetFactory::getObjects()->potato);
         _pipeline = new Pipeline(defaultFrameBufferResolution());
         _world = new World(_pipeline);
+        _ocean = new Ocean(_pipeline);
         _menu = new Menu(_pipeline);
         input()->addPressedCallback(GLFW_KEY_UP, [this](int mods, int key){
             _menu->next();
@@ -152,6 +154,7 @@ public:
 private:
     Pipeline* _pipeline{nullptr};
     World* _world{nullptr};
+    Ocean* _ocean{nullptr};
     Menu* _menu{nullptr};
     Client* _client{nullptr};
     Server* _server{nullptr};

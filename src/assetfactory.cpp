@@ -35,6 +35,7 @@ void AssetFactory::loadMeshes()
     });
     instance._meshes.block = lithium::tinyobjloader_load("assets/block.obj", AssetFactory::objectAttributes);
     instance._meshes.potato = lithium::tinyobjloader_load("assets/player/PlayerStatic.obj", AssetFactory::objectAttributes);
+    instance._meshes.ocean = lithium::tinyobjloader_load("assets/ocean/Ocean.obj", AssetFactory::objectAttributes);
     for (int idx = 0; idx < numUniqueTiles; idx++) {
         std::string numString = std::to_string(idx + 1);
         instance._meshes.tiles[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/tiles" + numString + ".obj").c_str(), AssetFactory::objectAttributes);
@@ -47,6 +48,7 @@ void AssetFactory::loadTextures()
     instance._textures.blockDiffuse = lithium::ImageTexture::load("assets/Kraxbox_logo_lithium_metal_2ff2069c-b84a-426c-bf92-e9831105a5df.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.treeDiffuse = lithium::ImageTexture::load("assets/tree.jpg", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.potatoDiffuse = lithium::ImageTexture::load("assets/player/Potato.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
+    instance._textures.oceanDiffuse = lithium::ImageTexture::load("assets/ocean/Ocean.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.dirtDiffuse = lithium::ImageTexture::load("assets/tile1/Dirt.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.permanentMarkerSdf = lithium::ImageTexture::load("assets/PermanentMarker32.png", GL_RGB, GL_RGBA, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_TEXTURE0, 1, false);
 }
@@ -56,6 +58,7 @@ void AssetFactory::loadObjects()
     AssetFactory& instance = getInstance();
     instance._objects.block = new lithium::Object(instance._meshes.block, instance._textures.blockDiffuse);
     instance._objects.potato = new lithium::Object(instance._meshes.potato, instance._textures.potatoDiffuse);
+    instance._objects.ocean = new lithium::Object(instance._meshes.ocean, instance._textures.oceanDiffuse);
     for (int idx = 0; idx < numUniqueTiles; idx++) {
         instance._objects.tiles[idx] = new lithium::Object(instance._meshes.tiles[idx], instance._textures.dirtDiffuse);
     }

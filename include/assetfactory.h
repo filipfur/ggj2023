@@ -16,6 +16,7 @@ public:
         lithium::Mesh* screen;
         lithium::Mesh* block;
         lithium::Mesh* potato;
+        lithium::Mesh* ocean;
         lithium::Mesh* tiles[numUniqueTiles];
     } _meshes;
 
@@ -25,6 +26,7 @@ public:
         lithium::ImageTexture* blockDiffuse;
         lithium::ImageTexture* treeDiffuse;
         lithium::ImageTexture* potatoDiffuse;
+        lithium::ImageTexture* oceanDiffuse;
         lithium::ImageTexture* dirtDiffuse;
     } _textures;
 
@@ -32,6 +34,7 @@ public:
     {
         lithium::Object* potato;
         lithium::Object* block;
+        lithium::Object* ocean;
         lithium::Object* tiles[numUniqueTiles];
     } _objects;
 

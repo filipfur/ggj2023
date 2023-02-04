@@ -76,7 +76,6 @@ void Pipeline::render()
     glDepthMask(GL_TRUE);
     _blockShader->setUniform("u_view", _camera->view());
     std::for_each(_objects.begin(), _objects.end(), [this](lithium::Object* o) {
-        o->setScale(1.0f);
         o->setColor(glm::vec3{1.0f, 0.85f, 0.55f});
         o->shade(_blockShader);
         o->draw();
