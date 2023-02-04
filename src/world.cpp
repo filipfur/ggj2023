@@ -9,8 +9,7 @@ World::World(lithium::RenderPipeline *pipeline)
     lithium::Object* block = AssetFactory::getObjects()->tiles[0];
     for (int zIdx = 0; zIdx < numWorldTilesZ; zIdx++) {
         for (int xIdx = 0; xIdx < numWorldTilesX; xIdx++) {
-            //int idx = std::rand() % numUniqueTiles;
-            int uniqueTileIdx = (xIdx + zIdx) % numUniqueTiles;
+            int uniqueTileIdx = std::rand() % numUniqueTiles;
             uniqueTileIndices[zIdx][xIdx] = uniqueTileIdx;
             float xOffset = (xIdx - float(numWorldTilesX - 1)/2) * tileSideLength;
             float zOffset = (zIdx - float(numWorldTilesZ - 1)/2) * tileSideLength;
