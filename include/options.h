@@ -2,10 +2,13 @@
 
 static constexpr int randomSeed = 0;
 
-static constexpr int numWorldTilesX = 11;
-static constexpr int numWorldTilesZ = numWorldTilesX;
+static constexpr unsigned int numWorldTilesX = 11;
+static constexpr unsigned int numWorldTilesZ = numWorldTilesX;
 
-static constexpr int numUniqueTiles = 3;
+static constexpr unsigned int numUniqueTiles = 3;
+
+static constexpr float zNear = 0.1;
+static constexpr float zFar = 1000.0;
 
 static constexpr float tileSideLength = 30.0;
 

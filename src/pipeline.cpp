@@ -15,7 +15,7 @@ static constexpr attr NORMAL{attr::VEC3};
 static constexpr attr UV{attr::VEC2};
 
 Pipeline::Pipeline(const glm::ivec2& resolution)  : lithium::RenderPipeline{resolution},
-        _camera{new lithium::SimpleCamera(glm::perspective(glm::radians(45.0f), (float)resolution.x / (float)resolution.y, 0.1f, 100.0f))}
+        _camera{new lithium::SimpleCamera(glm::perspective(glm::radians(45.0f), (float)resolution.x / (float)resolution.y, zNear, zFar))}
 {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
