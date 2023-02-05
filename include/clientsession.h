@@ -11,7 +11,7 @@
 
 #include "options.h"
 
-static  constexpr float potatoRadius = 0.5f;
+static  constexpr float potatoRadius = 1.0f;
 
 class ClientSession
 {
