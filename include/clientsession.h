@@ -53,6 +53,11 @@ public:
         _state = state;
     }
 
+    void setHeadButtVelocity(glm::vec2 v)
+    {
+        _headButtVelocity = v;
+    }
+
     void refresh()
     {
         _lastUpdate = std::chrono::steady_clock::now();
@@ -191,4 +196,5 @@ private:
     bool _moveable{true};
     static constexpr float _respawnTime{10000.0f};
     float _respawnTimer{_respawnTime};
+    glm::vec2 _headButtVelocity{0.0, 0.0};
 };

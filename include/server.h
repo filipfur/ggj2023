@@ -257,6 +257,18 @@ public:
                 csVec[idx1]->clientState()->xrz.z -= moveDistance * n.y;
                 csVec[idx2]->clientState()->xrz.x += moveDistance * n.x;
                 csVec[idx2]->clientState()->xrz.z += moveDistance * n.y;
+
+                // Handle head butting
+                bool headButting1 = csVec[idx1]->state() == letsgetsocial::ClientActionState::HEAD_BUTT;
+                bool headButting2 = csVec[idx2]->state() == letsgetsocial::ClientActionState::HEAD_BUTT;
+                if (headButting1) {
+                    csVec[idx2]->setState(letsgetsocial::ClientActionState::AIRBORNE);
+                    csVec[idx2]->setHeadButtVelocity(n * goptions::headButtSpeed);
+                }
+                if (headButting2) {
+                    csVec[idx1]->setState(letsgetsocial::ClientActionState::AIRBORNE);
+                    csVec[idx1]->setHeadButtVelocity(-n * goptions::headButtSpeed);
+                }
             }
         }
 

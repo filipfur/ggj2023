@@ -65,19 +65,15 @@ void ClientSession::update(float dt)
                     case letsgetsocial::ACTION_KEY_SPACE:
                         _state = letsgetsocial::ClientActionState::HEAD_BUTT;
                         stateDuration = 1.0f;
-                        /*_scheduledTasks.push_back(ScheduledTask{0.800f, [this](){
-                            
-                        }});*/
                         break;
                     case letsgetsocial::ACTION_KEY_Q:
                         _state = letsgetsocial::ClientActionState::DIG;
-                        //stateDuration = 1.0f;
+                        stateDuration = 1.5f;
                         _moveable = false;
-                        _scheduledTasks.push_back(ScheduledTask{1.5f, [this](){
+                        _scheduledTasks.push_back(ScheduledTask{stateDuration, [this](){
                             _moveable = true;
                         }});
                         return;
-                        break;
                 }
                 if(stateDuration == 0.0f)
                 {
@@ -102,6 +98,10 @@ void ClientSession::update(float dt)
             {
                 _state = letsgetsocial::ClientActionState::IDLE;
             }
+            break;
+        case letsgetsocial::ClientActionState::AIRBORNE:
+            _clientState->xrz.x += _headButtVelocity.x * dt;
+            _clientState->xrz.z += _headButtVelocity.y * dt;
             break;
         }
     }

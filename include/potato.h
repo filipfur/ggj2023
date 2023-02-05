@@ -77,6 +77,9 @@ public:
             case letsgetsocial::ClientActionState::DIG: // Root
                 _potato->setAnimation("Dig");
                 break;
+            case letsgetsocial::ClientActionState::AIRBORNE: // Root
+                _potato->setAnimation("Dig");
+                break;
             case letsgetsocial::ClientActionState::DEATH: // Death
                 _potato->setAnimation("Dig");
                 break;
@@ -88,20 +91,20 @@ public:
         Character::update(dt);
         if(_state == letsgetsocial::ClientActionState::DIG)
         {
-            if(_digDepth > -3.0f)
+            if(_actionYOffset > -3.0f)
             {
-                _digDepth -= dt * 2.0f;
+                _actionYOffset -= dt * 2.0f;
             }
             else
             {
-                _digDepth = -3.0f;
+                _actionYOffset = -3.0f;
             }
         }
         else
         {
-            _digDepth = 0.0f;
+            _actionYOffset = 0.0f;
         }
-        object()->setPosition(positionAndHeight() + glm::vec3{0.0f, _digDepth, 0.0f});
+        object()->setPosition(positionAndHeight() + glm::vec3{0.0f, _actionYOffset, 0.0f});
         object()->setRotation(glm::vec3{0.0f, _direction, 0.0f});
         //float ds = _pluggSize - object->scale().x;
         //object()->setScale(object->scale().x * dt + 2.0f);
@@ -115,6 +118,6 @@ public:
 
 private:
     lithium::SkinnedObject* _potato;
-    float _digDepth{0.0f};
+    float _actionYOffset{0.0f};
     float _pluggSize;
 };

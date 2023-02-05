@@ -38,8 +38,13 @@ static constexpr float heightDisparityDecaySpeed = 16.0;
 
 namespace goptions
 {
+    extern const float gravity;
+    extern const float airborneTime;
+
     extern const float initialResourceTime;
     extern const float maxLifeTime;
+
+    extern const float headButtSpeed;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
