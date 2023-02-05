@@ -45,6 +45,7 @@ namespace goptions
     extern const float maxLifeTime;
 
     extern const float headButtSpeed;
+    extern const float headButtTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

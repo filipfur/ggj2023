@@ -241,8 +241,10 @@ public:
         // Handle collissions
         for (int idx1 = 0; idx1 < csVec.size(); idx1++) {
             for (int idx2 = idx1 + 1; idx2 < csVec.size(); idx2++) {
-                CircleBB& bb1 = *csVec[idx1]->boundingBox();
-                CircleBB& bb2 = *csVec[idx2]->boundingBox();
+                ClientSession& cs1 = *csVec[idx1];
+                ClientSession& cs2 = *csVec[idx2];
+                CircleBB& bb1 = *cs1.boundingBox();
+                CircleBB& bb2 = *cs2.boundingBox();
                 glm::vec2 n;
                 if (!_collisionSystem.test2D(bb1, bb2, n)) {
                     continue;
@@ -253,21 +255,27 @@ public:
                 }
                 n =  glm::normalize(n);
                 float moveDistance = (bb1.radii() + bb2.radii() - glm::distance(glm::vec2{bb1.position().x, bb1.position().z}, glm::vec2{bb2.position().x, bb2.position().z})) / (2);
-                csVec[idx1]->clientState()->xrz.x -= moveDistance * n.x;
-                csVec[idx1]->clientState()->xrz.z -= moveDistance * n.y;
-                csVec[idx2]->clientState()->xrz.x += moveDistance * n.x;
-                csVec[idx2]->clientState()->xrz.z += moveDistance * n.y;
+                cs1.clientState()->xrz.x -= moveDistance * n.x;
+                cs1.clientState()->xrz.z -= moveDistance * n.y;
+                cs2.clientState()->xrz.x += moveDistance * n.x;
+                cs2.clientState()->xrz.z += moveDistance * n.y;
 
                 // Handle head butting
-                bool headButting1 = csVec[idx1]->state() == letsgetsocial::ClientActionState::HEAD_BUTT;
-                bool headButting2 = csVec[idx2]->state() == letsgetsocial::ClientActionState::HEAD_BUTT;
+                bool headButting1 = cs1.state() == letsgetsocial::ClientActionState::HEAD_BUTT;
+                bool headButting2 = cs2.state() == letsgetsocial::ClientActionState::HEAD_BUTT;
                 if (headButting1) {
-                    csVec[idx2]->setState(letsgetsocial::ClientActionState::AIRBORNE);
-                    csVec[idx2]->setHeadButtVelocity(n * goptions::headButtSpeed);
+                    cs2.setState(letsgetsocial::ClientActionState::AIRBORNE);
+                    cs2.setHeadButtVelocity(n * goptions::headButtSpeed);
+                    _scheduledTasks.push_back(ScheduledTask{goptions::headButtTime, [&](){
+                        cs2.setState(letsgetsocial::ClientActionState::IDLE);
+                    }});
                 }
                 if (headButting2) {
-                    csVec[idx1]->setState(letsgetsocial::ClientActionState::AIRBORNE);
-                    csVec[idx1]->setHeadButtVelocity(-n * goptions::headButtSpeed);
+                    cs1.setState(letsgetsocial::ClientActionState::AIRBORNE);
+                    cs1.setHeadButtVelocity(-n * goptions::headButtSpeed);
+                    _scheduledTasks.push_back(ScheduledTask{goptions::headButtTime, [&](){
+                        cs2.setState(letsgetsocial::ClientActionState::IDLE);
+                    }});
                 }
             }
         }

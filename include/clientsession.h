@@ -181,6 +181,11 @@ public:
         return &_boundingBox;
     }
 
+    void scheduledTask(ScheduledTask task)
+    {
+        _scheduledTasks.push_back(task);
+    }
+
 private:
     uint8_t _id;
     CircleBB _boundingBox;
