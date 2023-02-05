@@ -274,7 +274,7 @@ public:
                     cs1.setState(letsgetsocial::ClientActionState::AIRBORNE);
                     cs1.setHeadButtVelocity(-n * goptions::headButtSpeed);
                     _scheduledTasks.push_back(ScheduledTask{goptions::headButtTime, [&](){
-                        cs2.setState(letsgetsocial::ClientActionState::IDLE);
+                        cs1.setState(letsgetsocial::ClientActionState::IDLE);
                     }});
                 }
             }
