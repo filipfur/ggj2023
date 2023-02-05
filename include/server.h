@@ -156,9 +156,11 @@ public:
     void update(float dt)
     {
         float yOffset = oceanYBaseOffset + tideAmplitude * glm::pow((1 - cos(_serverTime / tidePeriod * 2 * 3.14157))/2, tideExponent);
+        std::vector<ClientSession*> csVec;
         for(auto&& entry : _clientSessions)
         {
             ClientSession& cs = entry.second;
+            csVec.push_back(&cs);
 
             float lastX = cs.clientState()->xrz.x;
             float lastY = cs.elevation();
@@ -218,6 +220,29 @@ public:
             }
             cs.updateClientData();
         }
+
+        // Handle collissions
+        for (int idx1 = 0; idx1 < csVec.size(); idx1++) {
+            for (int idx2 = idx1 + 1; idx2 < csVec.size(); idx2++) {
+                CircleBB& bb1 = *csVec[idx1]->boundingBox();
+                CircleBB& bb2 = *csVec[idx2]->boundingBox();
+                glm::vec2 n;
+                if (!_collisionSystem.test2D(bb1, bb2, n)) {
+                    continue;
+                }
+                // Prevent division by when normalizing
+                if (n == glm::vec2{0}) {
+                    n = glm::vec2{1.0, 0.0};
+                }
+                n =  glm::normalize(n);
+                float moveDistance = (bb1.radii() + bb2.radii() - glm::distance(glm::vec2{bb1.position().x, bb1.position().z}, glm::vec2{bb2.position().x, bb2.position().z})) / (2);
+                csVec[idx1]->clientState()->xrz.x -= moveDistance * n.x;
+                csVec[idx1]->clientState()->xrz.z -= moveDistance * n.y;
+                csVec[idx2]->clientState()->xrz.x += moveDistance * n.x;
+                csVec[idx2]->clientState()->xrz.z += moveDistance * n.y;
+            }
+        }
+
         if(_gameRunning)
         {
             _serverTime += dt;
