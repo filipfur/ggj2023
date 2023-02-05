@@ -49,7 +49,7 @@ public:
         Character::onServerUpdate(state, health, position, delta, direction, aimDirection, speed, deltaRotation);
         switch(state)
         {
-            case 0x0:
+            case letsgetsocial::ClientActionState::IDLE:
                 switch(_moveState)
                 {
                     case MoveState::Idle:
@@ -69,13 +69,13 @@ public:
                         break;
                 }
                 break;
-            case 0x1: // Shoot
+            case letsgetsocial::ClientActionState::HEAD_BUTT: // Shoot
                 _potato->setAnimation("Push.001");
                 break;
-            case 0x2: // Root
+            case letsgetsocial::ClientActionState::DIG: // Root
                 _potato->setAnimation("Dig");
                 break;
-            case 0xF: // Death
+            case letsgetsocial::ClientActionState::DEATH: // Death
                 _potato->setAnimation("Dig");
                 break;
         }
@@ -84,7 +84,7 @@ public:
     virtual void update(float dt) override
     {
         Character::update(dt);
-        if(_state == 0x2)
+        if(_state == letsgetsocial::ClientActionState::DIG)
         {
             if(_digDepth > -3.0f)
             {

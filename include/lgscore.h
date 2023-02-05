@@ -211,6 +211,14 @@ namespace letsgetsocial
         int clientData; // [characterId : actionId | clientHealth | force : directionHi | directionLo ]
     };
 
+    enum ClientActionState {
+        IDLE = 0,
+        HEAD_BUTT = 1,
+        DIG = 2,
+        AIRBORNE = 3,
+        DEATH = 15,
+    };
+
     static constexpr int MAX_PROJECTILES{80};
 
     struct ClientStateList

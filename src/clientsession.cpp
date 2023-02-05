@@ -17,12 +17,14 @@ void ClientSession::update(float dt)
     glm::vec3 delta{wasdToDelta(wasd())};
     if(dead())
     {
-        _state = 0xF;
+        _state = letsgetsocial::ClientActionState::DEATH;
         waitToRespawn(dt, 2);
     }
     else
     {
-        if(state() == 0) // If actionId doing nothing.
+        switch (state())
+        {
+        case letsgetsocial::ClientActionState::IDLE: // If actionId doing nothing.
         {
             _clientState->xrz.y = _clientInput->aimDirection;
             while(_clientState->xrz.y > 180.0f) { _clientState->xrz.y -= 360.0f; }
@@ -61,14 +63,14 @@ void ClientSession::update(float dt)
                 switch(aId)
                 {
                     case letsgetsocial::ACTION_KEY_SPACE:
-                        _state = 0x1;
+                        _state = letsgetsocial::ClientActionState::HEAD_BUTT;
                         stateDuration = 1.0f;
                         /*_scheduledTasks.push_back(ScheduledTask{0.800f, [this](){
                             
                         }});*/
                         break;
                     case letsgetsocial::ACTION_KEY_Q:
-                        _state = 0x2;
+                        _state = letsgetsocial::ClientActionState::DIG;
                         //stateDuration = 1.0f;
                         _moveable = false;
                         _scheduledTasks.push_back(ScheduledTask{1.5f, [this](){
@@ -79,12 +81,12 @@ void ClientSession::update(float dt)
                 }
                 if(stateDuration == 0.0f)
                 {
-                    _state = 0x0;
+                    _state = letsgetsocial::ClientActionState::IDLE;
                 }
                 else
                 {
                     _scheduledTasks.push_back(ScheduledTask{stateDuration, [this](){
-                        _state = 0x0;
+                        _state = letsgetsocial::ClientActionState::IDLE;
                     }});
                 }
             }
@@ -93,13 +95,14 @@ void ClientSession::update(float dt)
                 std::cout << "Setting character id: " << (int)(aId - 0x9) << std::endl;
                 setCharacterId(aId - 0x9);
             }
+            break;
         }
-        else if(_state == 0x2)
-        {
+        case letsgetsocial::ClientActionState::DIG:
             if(_moveable && (delta.x * delta.x > 0.01f || delta.z * delta.z > 0.01f))
             {
-                _state = 0x0;
+                _state = letsgetsocial::ClientActionState::IDLE;
             }
+            break;
         }
     }
 }
