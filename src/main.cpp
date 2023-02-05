@@ -19,7 +19,7 @@ void serverThreadFunc(Server* server)
 class App : public lithium::Application, public IClient
 {
 public:
-    App() : lithium::Application{"GGJ2023 | GG NO RE", glm::ivec2{1600, 900}, lithium::Application::Mode::DEFAULT, false}
+    App() : lithium::Application{"GGJ2023 | GG NO RE", glm::ivec2{1920, 1080}, lithium::Application::Mode::DEFAULT, true}
     {
         AssetFactory::loadMeshes();
         AssetFactory::loadTextures();
@@ -49,6 +49,11 @@ public:
         _world = new World(_pipeline);
         _ocean = new Ocean(_pipeline);
         _menu = new Menu(_pipeline);
+
+        input()->addPressedCallback(GLFW_KEY_ESCAPE, [](int mods, int key){
+            exit(0);
+            return true;
+        });
 
         playAudio("assets/sounds/themesong.wav");
 
