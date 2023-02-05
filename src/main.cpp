@@ -19,7 +19,7 @@ void serverThreadFunc(Server* server)
 class App : public lithium::Application, public IClient
 {
 public:
-    App() : lithium::Application{"GGJ2023 | GG NO RE", glm::ivec2{1920, 1080}, lithium::Application::Mode::DEFAULT, true}
+    App() : lithium::Application{"GGJ2023 | GG NO RE", glm::ivec2{1600, 900}, lithium::Application::Mode::MULTISAMPLED_4X, false}
     {
         AssetFactory::loadMeshes();
         AssetFactory::loadTextures();
@@ -266,7 +266,7 @@ public:
             _pipeline->renderText(150.0f, 400.0f, "GAME OVER");
         }
 
-        if(_client && _client->serverTime() < 0.1f)
+        if(_client && _client->serverTime() < 0.01f)
         {
             _pipeline->textColor(glm::vec3{1.0f, 1.0f, 1.0f});
             _pipeline->textScale(1.0f);

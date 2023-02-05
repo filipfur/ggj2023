@@ -155,8 +155,21 @@ public:
 
     void update(float dt)
     {
+        auto it = _scheduledTasks.begin();
+        while(it != _scheduledTasks.end())
+        {
+            if(it->tick(dt))
+            {
+                it = _scheduledTasks.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
         float yOffset = oceanYBaseOffset + tideAmplitude * glm::pow((1 - cos(_serverTime / tidePeriod * 2 * 3.14157))/2, tideExponent);
         std::vector<ClientSession*> csVec;
+        int alivePlayers{0};
         for(auto&& entry : _clientSessions)
         {
             ClientSession& cs = entry.second;
@@ -195,6 +208,10 @@ public:
                 else
                 {
                     cs.setLife(std::max(cs.life() - dt, 0.0f));
+                }
+                if(cs.state() != 0xF)
+                {
+                    ++alivePlayers;
                 }
             }
 
@@ -246,6 +263,30 @@ public:
         if(_gameRunning)
         {
             _serverTime += dt;
+            if(alivePlayers == 1)
+            {
+                _gameRunning = false;
+                _scheduledTasks.push_back(ScheduledTask{5.0f, [this](){
+                    for(int z{0}; z < numWorldTilesZ; ++z)
+                    {
+                        for(int x{0}; x < numWorldTilesX; ++x)
+                        {
+                            _resources[z][x] = goptions::initialResourceTime;
+                            _clientStateList.resources[z][x] = 0xFF;
+                        }   
+                    }
+                    for(auto entry : _clientSessions)
+                    {
+                        entry.second.setLife(goptions::maxLifeTime * 0.5f);
+                        entry.second.clientState()->xrz.x = (rand() % 16) - 8;
+                        entry.second.clientState()->xrz.z = (rand() % 16) - 8;
+                        entry.second.setState(0x0);
+                        entry.second.setHealth(128);
+                        _serverTime = 0.1f;
+                    }
+                    _gameRunning = true;
+                }});
+            }
         }
         _clientStateList.time = _serverTime;
     }
@@ -274,4 +315,5 @@ private:
     float _serverTime{0.0f};
     bool _gameRunning{false};
     float _resources[numWorldTilesZ][numWorldTilesX];
+    std::vector<ScheduledTask> _scheduledTasks;
 };

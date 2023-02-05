@@ -48,6 +48,11 @@ public:
         return _id;
     }
 
+    void setState(uint8_t state)
+    {
+        _state = state;
+    }
+
     void refresh()
     {
         _lastUpdate = std::chrono::steady_clock::now();
@@ -116,14 +121,17 @@ public:
 
     void waitToRespawn(float dt, uint8_t maxHealth)
     {
-        _respawnTimer -= dt;
-        if(_respawnTimer <= 0)
+        if(_respawnTimer > 0)
         {
-            _health = maxHealth;
-            _clientState->xrz.x = (rand() % 16) - 8;
-            _clientState->xrz.z = (rand() % 16) - 8;
-            _respawnTimer = _respawnTime;
-            _state = 0x0;
+            _respawnTimer -= dt;
+            if(_respawnTimer <= 0)
+            {
+                _health = maxHealth;
+                _clientState->xrz.x = (rand() % 16) - 8;
+                _clientState->xrz.z = (rand() % 16) - 8;
+                _respawnTimer = _respawnTime;
+                _state = 0x0;
+            }
         }
     }
 
