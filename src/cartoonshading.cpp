@@ -1,5 +1,6 @@
 #include "cartoonshading.h"
 #include "gltinyobjloader.h"
+#include "assetfactory.h"
 
 CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{resolution}
 {
@@ -15,6 +16,10 @@ CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{reso
     _shaderProgram = new lithium::ShaderProgram( "shaders/cartoon.vert", "shaders/cartoon.frag" );
     _shaderProgram->setUniform("u_texture_0", 0);
     _shaderProgram->setUniform("u_shadow_map_0", 1);
+
+    _islandProgram = new lithium::ShaderProgram( "shaders/cartoon.vert", "shaders/island.frag" );
+    _islandProgram->setUniform("u_texture_0", 0);
+    _islandProgram->setUniform("u_shadow_map_0", 1);
 
     _waterProgram = new lithium::ShaderProgram( "shaders/cartoon.vert", "shaders/water.frag" );
     _waterProgram->setUniform("u_texture_0", 0);
@@ -101,6 +106,7 @@ CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{reso
     _sceneUBO = new lithium::UniformBufferObject(244, "SceneBlock", 0);
     _sceneUBO->bindBufferBase({
         _shaderProgram,
+        _islandProgram,
         _skinningShader,
         _normalShader,
         _normalSkinningShader,
@@ -180,7 +186,7 @@ void CartoonShading::render()
 
         for(auto object : _objects)
         {
-            object->shade(_shaderProgram);
+            object->shade(object->texture() == AssetFactory::getTextures()->dirtDiffuse ? _islandProgram : _shaderProgram);
             object->draw();
         }
         for(auto object : _skinnedObjects)

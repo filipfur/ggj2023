@@ -9,6 +9,8 @@
 
 #include "circlebb.h"
 
+#include "options.h"
+
 class ClientSession
 {
 public:
@@ -54,6 +56,16 @@ public:
         return _lastUpdate;
     }
 
+    float life() const
+    {
+        return _life;
+    }
+
+    void setLife(float life)
+    {
+        _life = life;
+    }
+
     glm::vec3 wasdToDelta(uint8_t wasd)
     {
         float x{0.0f};
@@ -82,6 +94,7 @@ public:
 
     void updateClientData()
     {
+        _health = static_cast<uint8_t>(std::ceilf(_life / goptions::maxLifeTime * 255));
         _clientState->clientData = (characterId() << 28) & 0xF0000000
             | (_state << 24) & 0x0F000000
             | (_health << 16) & 0x00FF0000
@@ -105,8 +118,8 @@ public:
         if(_respawnTimer <= 0)
         {
             _health = maxHealth;
-            _clientState->xrz.x = (rand() % 96) - 48;
-            _clientState->xrz.z = (rand() % 96) - 48;
+            _clientState->xrz.x = (rand() % 16) - 8;
+            _clientState->xrz.z = (rand() % 16) - 8;
             _respawnTimer = _respawnTime;
             _state = 0x0;
         }
@@ -161,10 +174,11 @@ private:
     SOCKADDR_IN _endpoint;
     std::chrono::steady_clock::time_point _lastUpdate;
     std::vector<ScheduledTask> _scheduledTasks;
-    uint8_t _health{2};
+    uint8_t _health{128};
     uint8_t _state{0};
     uint8_t _characterId{0};
+    float _life{goptions::maxLifeTime * 0.5f};
     bool _moveable{true};
-    static constexpr float _respawnTime{5.0f};
+    static constexpr float _respawnTime{10000.0f};
     float _respawnTimer{_respawnTime};
 };

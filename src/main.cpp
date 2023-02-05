@@ -49,6 +49,9 @@ public:
         _world = new World(_pipeline);
         _ocean = new Ocean(_pipeline);
         _menu = new Menu(_pipeline);
+
+        playAudio("assets/sounds/themesong.wav");
+
         input()->addPressedCallback(GLFW_KEY_UP, [this](int mods, int key){
             _menu->next();
             return true;
@@ -90,7 +93,7 @@ public:
 
     virtual Character* onCharacterSpawned(uint8_t clientId, uint8_t characterId) override
     {
-        auto character = _character = createCharacter(clientId, characterId);
+        auto character = createCharacter(clientId, characterId);
         if(_character == nullptr || clientId == _client->clientId())
         {
             _character = character;
@@ -210,15 +213,24 @@ public:
         }
         _zBuffer->unbind();
 
+        bool allDead{true};
         for(auto it = _characters.begin(); it != _characters.end(); ++it)
         {
             auto character = it->second;
             character->update(dt);
-
+            glm::vec3 p0{character->position()};
             // Update character elevation
             float sourceElevation = character->height();
-            float targetElevation = _world->getElevation(character->position());
+            float targetElevation = _world->getElevation(p0);
             character->setHeight(sourceElevation + (targetElevation - sourceElevation)*heightDisparityDecaySpeed*dt);
+
+            if(character != _character && character->state() != 0xF)
+            {
+                allDead = false;
+            }
+
+            const glm::ivec2 tId = _world->posToTileId(p0.x, p0.z);
+            _world->tileObject(p0.x, p0.z)->setColor(glm::vec4{glm::vec3{(float)_client->resourceValue(tId.x, tId.y) / 255.0f}, 1.0f});
 
             glm::vec2 normal;
             if(_collisionSystem.checkCollision2D(*_character->boundingBox(), normal))
@@ -226,6 +238,7 @@ public:
                 //std::cout << "colliding!!" << std::endl;
             }
         }
+        _allMyFriendsAreDead = allDead;
 
         lithium::SimpleCamera* camera = _pipeline->camera();
         if (_character) {
@@ -240,6 +253,28 @@ public:
         {
             //_pipeline->textColor(glm::vec3{1.0f, 1.0f, 0.0f});
             //_pipeline->renderText(600.0f, 600.0f, "SERVING");
+        }
+        if(_character && _character->state() == 0xF)
+        {
+            _pipeline->textColor(glm::vec3{1.0f, 0.0f, 0.0f});
+            _pipeline->textScale(4.0f);
+            _pipeline->renderText(150.0f, 400.0f, "GAME OVER");
+        }
+
+        if(_client && _client->serverTime() < 0.1f)
+        {
+            _pipeline->textColor(glm::vec3{1.0f, 1.0f, 1.0f});
+            _pipeline->textScale(1.0f);
+            _pipeline->renderText(100.0f, 200.0f, "Waiting for other players...");
+        }
+        if(_character && _client->serverTime() > 0.1f)
+        {
+            if(_character->state() != 0xF && _allMyFriendsAreDead)
+            {
+                _pipeline->textColor(glm::vec3{1.0f, 1.0f, 0.0f});
+                _pipeline->textScale(4.0f);
+                _pipeline->renderText(150.0f, 400.0f, " YOU WON!");
+            }
         }
     }
     
@@ -259,6 +294,7 @@ private:
     float _winZ;
     lithium::ShaderProgram* _zShader{nullptr};
     lithium::FrameBuffer *_zBuffer{nullptr};
+    bool _allMyFriendsAreDead{false};
 };
 
 void init()

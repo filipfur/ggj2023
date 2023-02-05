@@ -41,7 +41,14 @@ void AssetFactory::loadMeshes()
         std::vector<glm::vec3> vertexPositions;
         instance._meshes.tiles[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/tile" + numString + ".obj").c_str(), AssetFactory::objectAttributes, glm::vec2{1.0f}, &vertexPositions);
         instance._mapSegments[idx] = new MapSegment(vertexPositions);
-        instance._meshes.grass[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/grassTile" + numString + ".obj").c_str(), AssetFactory::objectAttributes);
+        if(idx == 3)
+        {
+            instance._meshes.grass[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/houseTile" + numString + ".obj").c_str(), AssetFactory::objectAttributes);
+        }
+        else
+        {
+            instance._meshes.grass[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/grassTile" + numString + ".obj").c_str(), AssetFactory::objectAttributes);
+        }
         instance._meshes.trees[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/treeTile" + numString + ".obj").c_str(), AssetFactory::objectAttributes);
     }
 }
@@ -54,6 +61,7 @@ void AssetFactory::loadTextures()
     instance._textures.oceanDiffuse = lithium::ImageTexture::load("assets/Ocean/ocean.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.dirtDiffuse = lithium::ImageTexture::load("assets/Dirt.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.grassDiffuse = lithium::ImageTexture::load("assets/Grass.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
+    instance._textures.houseDiffuse = lithium::ImageTexture::load("assets/House.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.treeDiffuse = lithium::ImageTexture::load("assets/Tree.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.permanentMarkerSdf = lithium::ImageTexture::load("assets/PermanentMarker32.png", GL_RGB, GL_RGBA, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_TEXTURE0, 1, false);
 }
@@ -66,7 +74,14 @@ void AssetFactory::loadObjects()
     instance._objects.ocean = new lithium::Object(instance._meshes.ocean, instance._textures.oceanDiffuse);
     for (int idx = 0; idx < numUniqueTiles; idx++) {
         instance._objects.tiles[idx] = new lithium::Object(instance._meshes.tiles[idx], instance._textures.dirtDiffuse);
-        instance._objects.grass[idx] = new lithium::Object(instance._meshes.grass[idx], instance._textures.grassDiffuse);
+        if(idx == 3)
+        {
+            instance._objects.grass[idx] = new lithium::Object(instance._meshes.grass[idx], instance._textures.houseDiffuse);
+        }
+        else
+        {
+            instance._objects.grass[idx] = new lithium::Object(instance._meshes.grass[idx], instance._textures.grassDiffuse);
+        }
         instance._objects.trees[idx] = new lithium::Object(instance._meshes.trees[idx], instance._textures.treeDiffuse);
     }
 }

@@ -36,6 +36,11 @@ class BasePipeline : public lithium::RenderPipeline
             _text->setColor(color);
         }
 
+        void textScale(float scale)
+        {
+            _text->setScale(scale);
+        }
+
     protected:
         lithium::SimpleCamera* _camera{nullptr};
         lithium::OrthographicCamera* _orthoCamera;

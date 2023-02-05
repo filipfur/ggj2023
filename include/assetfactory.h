@@ -31,6 +31,7 @@ public:
         lithium::ImageTexture* oceanDiffuse;
         lithium::ImageTexture* dirtDiffuse;
         lithium::ImageTexture* grassDiffuse;
+        lithium::ImageTexture* houseDiffuse;
         lithium::ImageTexture* treeDiffuse;
     } _textures;
 

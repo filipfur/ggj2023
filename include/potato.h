@@ -3,6 +3,7 @@
 
 #include "character.h"
 //#include "glanimatedobject.h"
+#include <iostream>
 
 class Potato : public Character
 {
@@ -47,6 +48,7 @@ public:
         float direction, float aimDirection, float speed, float deltaRotation) override
     {
         Character::onServerUpdate(state, health, position, delta, direction, aimDirection, speed, deltaRotation);
+        _pluggSize = (float)health / 255.0f * 2.0f + 0.1f;
         switch(state)
         {
             case letsgetsocial::ClientActionState::IDLE:
@@ -101,6 +103,9 @@ public:
         }
         object()->setPosition(positionAndHeight() + glm::vec3{0.0f, _digDepth, 0.0f});
         object()->setRotation(glm::vec3{0.0f, _direction, 0.0f});
+        //float ds = _pluggSize - object->scale().x;
+        //object()->setScale(object->scale().x * dt + 2.0f);
+        object()->setScale(_pluggSize);
     }
 
     virtual lithium::Object* object() const override
@@ -111,4 +116,5 @@ public:
 private:
     lithium::SkinnedObject* _potato;
     float _digDepth{0.0f};
+    float _pluggSize;
 };

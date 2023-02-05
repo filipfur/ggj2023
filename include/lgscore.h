@@ -24,6 +24,8 @@
 
 #include <glm/glm.hpp>
 
+#include "options.h"
+
 namespace letsgetsocial
 {
 
@@ -228,6 +230,7 @@ namespace letsgetsocial
         uint8_t extra1;
         uint8_t extra2;
         //int events[MAX_PROJECTILES]; // [ ClientId : InstanceType | InstanceId | Force : DirectionHi | DirectionL ]
+        uint8_t resources[numWorldTilesZ][numWorldTilesX];
         float time;
         ClientState clientStates[letsgetsocial::MAX_CLIENTS];
     };

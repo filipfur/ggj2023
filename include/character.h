@@ -192,6 +192,11 @@ public:
         return &_boundingBox;
     }
 
+    uint8_t state() const
+    {
+        return _state;
+    }
+
 protected:
 
     virtual void onServerUpdate(uint8_t state, uint8_t health, const glm::vec3& position, const glm::vec3& delta,

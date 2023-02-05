@@ -207,6 +207,11 @@ public:
         return _clientStatesCopy.time;
     }
 
+    uint8_t resourceValue(int x, int z)
+    {
+        return _clientStatesCopy.resources[z][x];
+    }
+
     private:
         IClient* _iClient;
         std::unique_ptr<std::thread> _thread;

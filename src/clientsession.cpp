@@ -32,14 +32,14 @@ void ClientSession::update(float dt)
             if(delta.x * delta.x > 0.01f)
             {
                 //_clientState->xrz.y -= 1.57f * delta.x * dt;
-                float distance = 8.0f * delta.x * dt;
+                float distance = 12.0f * delta.x * dt;
                 float alpha = glm::radians(_clientState->xrz.y - 90.0f);
                 _clientState->xrz.x += glm::sin(alpha) * distance;
                 _clientState->xrz.z += glm::cos(alpha) * distance;
             }
             if(delta.z * delta.z > 0.01f)
             {
-                float distance = 8.0f * delta.z * dt;
+                float distance = 12.0f * delta.z * dt;
                 float alpha = glm::radians(_clientState->xrz.y);
                 _clientState->xrz.x += glm::sin(alpha) * distance;
                 _clientState->xrz.z += glm::cos(alpha) * distance;

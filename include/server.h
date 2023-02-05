@@ -23,6 +23,15 @@ public:
         _clientStateList.messageType = letsgetsocial::MESSAGE_CLIENT_STATE;
         _socket.setNonBlockingReceive();
 
+        for(int z{0}; z < numWorldTilesZ; ++z)
+        {
+            for(int x{0}; x < numWorldTilesX; ++x)
+            {
+                _resources[z][x] = goptions::initialResourceTime;
+                _clientStateList.resources[z][x] = 0xFF;
+            }   
+        }
+
         /*std::vector<lithium::Node*> mapProperties;
         _gltfLoader.loadNodeProperties("assets/map/map.gltf", mapProperties);
 
@@ -67,19 +76,23 @@ public:
                     nextId = nextFreeClientId();
                     _clientInputs[nextId] = new letsgetsocial::ClientInput();
                     //letsgetsocial::ClientState clientState{letsgetsocial::MESSAGE_CLIENT_STATE, nextId, glm::vec3{0.0f}, 0.0f, 0.0f, 0.0f};
-                    _clientStateList.clientStates[nextId].xrz = glm::vec3{(rand() % 96) - 48, 0.0f, (rand() % 96) - 48};
+                    _clientStateList.clientStates[nextId].xrz = glm::vec3{(rand() % 16) - 8, 0.0f, (rand() % 16) - 8};
 
-                    std::cout << "New client: " << nextId << std::endl;
+                    std::cout << "New client: " << static_cast<int>(nextId) << std::endl;
                     //_clientStates[nextId].rotation = _clientStates[nextId].speed = _clientStates[nextId].rotationalSpeed = 0.0f;
                     ClientSession clientSession{nextId,
                         _clientInputs[nextId],
                         &_clientStateList.clientStates[nextId],
                         _socket.endpoint()};
 
-                    clientSession.setHealth((uint8_t)2);
+                    clientSession.setHealth((uint8_t)128);
                     
                     _clientSessions.emplace(addr, clientSession);
                     newClients.emplace(nextId);
+                    if(_clientSessions.size() >= 2)
+                    {
+                        _gameRunning = true;
+                    }
                 }
                 else
                 {
@@ -94,7 +107,12 @@ public:
                 }
             }
             auto now = std::chrono::steady_clock::now();
-            update(std::chrono::duration<float>(now - _startTick).count());
+            float dt{0.0f};
+            //if(_gameRunning)
+            //{
+                dt = std::chrono::duration<float>(now - _startTick).count();
+            //}
+            update(dt);
             _startTick = now;
             std::map<std::string, ClientSession>::iterator it = _clientSessions.begin();
             while(it != _clientSessions.end())
@@ -149,7 +167,37 @@ public:
             {
                 cs.setHealth(0);
             }
+
+            if(_gameRunning)
+            {
+                if(cs.state() == 0x2)
+                {
+                    float x = lastX;
+                    float z = lastZ;
+                    x += worldSizeX / 2;
+                    z += worldSizeZ / 2;
+                    int xIdx = std::clamp(static_cast<int>(x / tileSideLength), 0, static_cast<int>(numWorldTilesX - 1));
+                    int zIdx = std::clamp(static_cast<int>(z / tileSideLength), 0, static_cast<int>(numWorldTilesZ - 1));
+                    _resources[zIdx][xIdx] -= dt;
+                    if(_resources[zIdx][xIdx] <= 0)
+                    {
+                        _resources[zIdx][xIdx] = 0.0f;
+                        cs.setLife(std::max(cs.life() - dt, 0.0f));
+                    }
+                    else
+                    {
+                        cs.setLife(std::min(cs.life() + dt * 2.5f, goptions::maxLifeTime));
+                    }
+                    _clientStateList.resources[zIdx][xIdx] = static_cast<uint8_t>(std::ceilf(_resources[zIdx][xIdx] / goptions::initialResourceTime * 255));
+                }
+                else
+                {
+                    cs.setLife(std::max(cs.life() - dt, 0.0f));
+                }
+            }
+
             cs.update(dt);
+
             auto bb = cs.boundingBox();
             bb->setPosition(glm::vec3{cs.clientState()->xrz.x, 0.0f, cs.clientState()->xrz.z});
             glm::vec2 normal{};
@@ -170,7 +218,10 @@ public:
             }
             cs.updateClientData();
         }
-        _serverTime += dt;
+        if(_gameRunning)
+        {
+            _serverTime += dt;
+        }
         _clientStateList.time = _serverTime;
     }
 
@@ -196,4 +247,6 @@ private:
     CollisionSystem _collisionSystem;
     gltf::Loader _gltfLoader;
     float _serverTime{0.0f};
+    bool _gameRunning{false};
+    float _resources[numWorldTilesZ][numWorldTilesX];
 };

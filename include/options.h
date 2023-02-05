@@ -6,10 +6,10 @@
 
 static constexpr int randomSeed = 0;
 
-static constexpr unsigned int numWorldTilesX = 11;
+static constexpr unsigned int numWorldTilesX = 5;
 static constexpr unsigned int numWorldTilesZ = numWorldTilesX;
 
-static constexpr unsigned int numUniqueTiles = 3;
+static constexpr unsigned int numUniqueTiles = 4;
 
 static constexpr float zNear = 0.1;
 static constexpr float zFar = 1000.0;
@@ -27,8 +27,8 @@ static constexpr float cameraOffsetZ = -cameraOffsetY;
 
 static constexpr float oceanYBaseOffset = 0.3;
 static constexpr float tideAmplitude = 3.0;
-static constexpr float tidePeriod = 60.0;
-static constexpr float tideExponent = 4.0;
+static constexpr float tidePeriod = 30.0;
+static constexpr float tideExponent = 3.0;
 
 static constexpr float mainCharacterStartX = 0.0;
 static constexpr float mainCharacterYOffset = 3.0;
@@ -36,6 +36,11 @@ static constexpr float mainCharacterStartZ = 0.0;
 
 static constexpr float heightDisparityDecaySpeed = 16.0;
 
+namespace goptions
+{
+    extern const float initialResourceTime;
+    extern const float maxLifeTime;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // DERIVED CONSTANTS

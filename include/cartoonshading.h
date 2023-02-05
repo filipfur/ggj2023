@@ -63,6 +63,7 @@ private:
     lithium::ShaderProgram* _normalSkinningShader{nullptr};
     lithium::ShaderProgram* _colorProgram{nullptr};
     lithium::ShaderProgram* _shaderProgram{nullptr};
+    lithium::ShaderProgram* _islandProgram{nullptr};
     lithium::ShaderProgram* _waterProgram{nullptr};
     lithium::ShaderProgram* _bloomProgram{nullptr};
     lithium::ShaderProgram* _skinningShader{nullptr};
