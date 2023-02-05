@@ -12,8 +12,6 @@
 
 #include "options.h"
 
-static  constexpr float potatoRadius = 1.0f;
-
 class ClientSession
 {
 public:
@@ -174,7 +172,7 @@ public:
     void setCharacterId(uint8_t characterId)
     {
         _characterId = characterId;
-        _boundingBox.setRadii(potatoRadius);
+        _boundingBox.setRadii(goptions::potatoRadius);
     }
 
     CircleBB* boundingBox()

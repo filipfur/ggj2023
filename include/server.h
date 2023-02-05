@@ -23,9 +23,9 @@ public:
         _clientStateList.messageType = letsgetsocial::MESSAGE_CLIENT_STATE;
         _socket.setNonBlockingReceive();
 
-        for(int z{0}; z < numWorldTilesZ; ++z)
+        for(int z{0}; z < goptions::numWorldTilesZ; ++z)
         {
-            for(int x{0}; x < numWorldTilesX; ++x)
+            for(int x{0}; x < goptions::numWorldTilesX; ++x)
             {
                 _resources[z][x] = goptions::initialResourceTime;
                 _clientStateList.resources[z][x] = 0xFF;
@@ -167,7 +167,7 @@ public:
                 ++it;
             }
         }
-        float yOffset = oceanYBaseOffset + tideAmplitude * glm::pow((1 - cos(_serverTime / tidePeriod * 2 * 3.14157))/2, tideExponent);
+        float yOffset = goptions::oceanYBaseOffset + goptions::tideAmplitude * glm::pow((1 - cos(_serverTime / goptions::tidePeriod * 2 * 3.14157))/2, goptions::tideExponent);
         std::vector<ClientSession*> csVec;
         int alivePlayers{0};
         for(auto&& entry : _clientSessions)
@@ -189,10 +189,10 @@ public:
                 {
                     float x = lastX;
                     float z = lastZ;
-                    x += worldSizeX / 2;
-                    z += worldSizeZ / 2;
-                    int xIdx = std::clamp(static_cast<int>(x / tileSideLength), 0, static_cast<int>(numWorldTilesX - 1));
-                    int zIdx = std::clamp(static_cast<int>(z / tileSideLength), 0, static_cast<int>(numWorldTilesZ - 1));
+                    x += goptions::worldSizeX / 2;
+                    z += goptions::worldSizeZ / 2;
+                    int xIdx = std::clamp(static_cast<int>(x / goptions::tileSideLength), 0, static_cast<int>(goptions::numWorldTilesX - 1));
+                    int zIdx = std::clamp(static_cast<int>(z / goptions::tileSideLength), 0, static_cast<int>(goptions::numWorldTilesZ - 1));
                     _resources[zIdx][xIdx] -= dt;
                     if(_resources[zIdx][xIdx] <= 0)
                     {
@@ -287,9 +287,9 @@ public:
             {
                 _gameRunning = false;
                 _scheduledTasks.push_back(ScheduledTask{5.0f, [this](){
-                    for(int z{0}; z < numWorldTilesZ; ++z)
+                    for(int z{0}; z < goptions::numWorldTilesZ; ++z)
                     {
-                        for(int x{0}; x < numWorldTilesX; ++x)
+                        for(int x{0}; x < goptions::numWorldTilesX; ++x)
                         {
                             _resources[z][x] = goptions::initialResourceTime;
                             _clientStateList.resources[z][x] = 0xFF;
@@ -334,6 +334,6 @@ private:
     gltf::Loader _gltfLoader;
     float _serverTime{0.0f};
     bool _gameRunning{false};
-    float _resources[numWorldTilesZ][numWorldTilesX];
+    float _resources[goptions::numWorldTilesZ][goptions::numWorldTilesX];
     std::vector<ScheduledTask> _scheduledTasks;
 };

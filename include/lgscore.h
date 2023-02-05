@@ -230,7 +230,7 @@ namespace letsgetsocial
         uint8_t extra1;
         uint8_t extra2;
         //int events[MAX_PROJECTILES]; // [ ClientId : InstanceType | InstanceId | Force : DirectionHi | DirectionL ]
-        uint8_t resources[numWorldTilesZ][numWorldTilesX];
+        uint8_t resources[goptions::numWorldTilesZ][goptions::numWorldTilesX];
         float time;
         ClientState clientStates[letsgetsocial::MAX_CLIENTS];
     };

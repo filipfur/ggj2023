@@ -18,9 +18,9 @@ public:
         lithium::Mesh* block;
         lithium::Mesh* potato;
         lithium::Mesh* ocean;
-        lithium::Mesh* tiles[numUniqueTiles];
-        lithium::Mesh* grass[numUniqueTiles];
-        lithium::Mesh* trees[numUniqueTiles];
+        lithium::Mesh* tiles[goptions::numUniqueTiles];
+        lithium::Mesh* grass[goptions::numUniqueTiles];
+        lithium::Mesh* trees[goptions::numUniqueTiles];
         lithium::Mesh* chest;
     } _meshes;
 
@@ -42,9 +42,9 @@ public:
         lithium::SkinnedObject* potato;
         lithium::Object* block;
         lithium::Object* ocean;
-        lithium::Object* tiles[numUniqueTiles];
-        lithium::Object* grass[numUniqueTiles];
-        lithium::Object* trees[numUniqueTiles];
+        lithium::Object* tiles[goptions::numUniqueTiles];
+        lithium::Object* grass[goptions::numUniqueTiles];
+        lithium::Object* trees[goptions::numUniqueTiles];
         lithium::Object* chest;
     } _objects;
 
@@ -53,7 +53,7 @@ public:
         lithium::Font* permanentMarker;
     } _fonts;
 
-    MapSegment* _mapSegments[numUniqueTiles];
+    MapSegment* _mapSegments[goptions::numUniqueTiles];
 
     AssetFactory();
     virtual ~AssetFactory() noexcept;

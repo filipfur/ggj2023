@@ -14,5 +14,5 @@ public:
     float getHeight(float x, float z) const;
 
 private:
-    float _heights[heightMapResolution][heightMapResolution];
+    float _heights[goptions::heightMapResolution][goptions::heightMapResolution];
 };

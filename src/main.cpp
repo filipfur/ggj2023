@@ -219,7 +219,7 @@ public:
             glClear(GL_DEPTH_BUFFER_BIT);
             glActiveTexture(GL_TEXTURE0);
             static auto oc = AssetFactory::getObjects()->ocean->clone();
-            oc->setScale(glm::vec3{oceanSideLengthX / oceanMeshSideLength, 1.0, oceanSideLengthZ / oceanMeshSideLength});
+            oc->setScale(glm::vec3{goptions::oceanSideLengthX / goptions::oceanMeshSideLength, 1.0, goptions::oceanSideLengthZ / goptions::oceanMeshSideLength});
             oc->shade(_zShader);
             oc->draw();
             glm::vec2 mp = input()->mousePosition(); // Default frame buffer resolution == LITHIUM_VIEWER_WIDTH ?
@@ -237,7 +237,7 @@ public:
             // Update character elevation
             float sourceElevation = character->height();
             float targetElevation = _world->getElevation(p0);
-            character->setHeight(sourceElevation + (targetElevation - sourceElevation)*heightDisparityDecaySpeed*dt);
+            character->setHeight(sourceElevation + (targetElevation - sourceElevation) * goptions::heightDisparityDecaySpeed*dt);
 
             if(character != _character && character->state() != 0xF)
             {
@@ -259,7 +259,7 @@ public:
         if (_character) {
             camera->setTarget(_character->position());
         }
-        camera->setPosition(camera->target() + glm::vec3{cameraOffsetX, cameraOffsetY, cameraOffsetZ});
+        camera->setPosition(camera->target() + glm::vec3{goptions::cameraOffsetX, goptions::cameraOffsetY, goptions::cameraOffsetZ});
 
         _pipeline->camera()->update(dt);
 
@@ -348,7 +348,7 @@ void init()
 
 int main(int argc, const char* argv[])
 {
-    std::srand(randomSeed);
+    std::srand(goptions::randomSeed);
 
     init();
     App* app = new App();

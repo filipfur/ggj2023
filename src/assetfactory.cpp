@@ -36,7 +36,7 @@ void AssetFactory::loadMeshes()
     instance._meshes.block = lithium::tinyobjloader_load("assets/block.obj", AssetFactory::objectAttributes);
     instance._meshes.potato = lithium::tinyobjloader_load("assets/player/PlayerStatic.obj", AssetFactory::objectAttributes);
     instance._meshes.ocean = lithium::tinyobjloader_load("assets/ocean/Ocean.obj", AssetFactory::objectAttributes);
-    for (int idx = 0; idx < numUniqueTiles; idx++) {
+    for (int idx = 0; idx < goptions::numUniqueTiles; idx++) {
         std::string numString = std::to_string(idx + 1);
         std::vector<glm::vec3> vertexPositions;
         instance._meshes.tiles[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/tile" + numString + ".obj").c_str(), AssetFactory::objectAttributes, glm::vec2{1.0f}, &vertexPositions);
@@ -74,7 +74,7 @@ void AssetFactory::loadObjects()
     instance._objects.block = new lithium::Object(instance._meshes.block, instance._textures.blockDiffuse);
     instance._objects.potato =  instance._gltfLoader.loadSkinnedObject("assets/player/Player.gltf"); //new lithium::Object(instance._meshes.potato, instance._textures.potatoDiffuse);
     instance._objects.ocean = new lithium::Object(instance._meshes.ocean, instance._textures.oceanDiffuse);
-    for (int idx = 0; idx < numUniqueTiles; idx++) {
+    for (int idx = 0; idx < goptions::numUniqueTiles; idx++) {
         instance._objects.tiles[idx] = new lithium::Object(instance._meshes.tiles[idx], instance._textures.dirtDiffuse);
         if(idx == 3)
         {

@@ -16,10 +16,10 @@ public:
 
     glm::ivec2 posToTileId(float x, float z) const
     {
-        x += worldSizeX / 2;
-        z += worldSizeZ / 2;
-        int xIdx = std::clamp(static_cast<int>(x / tileSideLength), 0, static_cast<int>(numWorldTilesX - 1));
-        int zIdx = std::clamp(static_cast<int>(z / tileSideLength), 0, static_cast<int>(numWorldTilesZ - 1));
+        x += goptions::worldSizeX / 2;
+        z += goptions::worldSizeZ / 2;
+        int xIdx = std::clamp(static_cast<int>(x / goptions::tileSideLength), 0, static_cast<int>(goptions::numWorldTilesX - 1));
+        int zIdx = std::clamp(static_cast<int>(z / goptions::tileSideLength), 0, static_cast<int>(goptions::numWorldTilesZ - 1));
         return glm::ivec2{xIdx, zIdx};
     }
 
@@ -32,6 +32,6 @@ public:
     void forEachTile(const std::function<void(lithium::Object*, int x, int z)>& callback);
 
 private:
-    int uniqueTileIndices[numWorldTilesZ][numWorldTilesX];
-    lithium::Object* _tileObjects[numWorldTilesZ][numWorldTilesX];
+    int uniqueTileIndices[goptions::numWorldTilesZ][goptions::numWorldTilesX];
+    lithium::Object* _tileObjects[goptions::numWorldTilesZ][goptions::numWorldTilesX];
 };
