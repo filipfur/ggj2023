@@ -51,7 +51,7 @@ void main()
     uv.x += iTime * 0.0005;
     uv.y += sin(uv.x + iTime * 0.5) * 0.0005;
 
-    vec4 color = texture(u_texture_0, uv * 48.0) * u_color;
+    vec4 color = texture(u_texture_0, uv * 24.0) * u_color;
 
     vec3 lightDir = normalize(vec3(0.1,1,0.1));
 
@@ -67,7 +67,7 @@ void main()
     rim = 0.0;
 
     //fragColor = vec4(color.rgb * stylize(diff, 2.0) * (1.0 - shadow) + color.rgb * vec3(rim) * 0.5, color.a);
-    fragColor = vec4(color.rgb * stylize(diff * (1.0 - shadow), 2.0) + color.rgb * stylize(rim * 0.5, 2.0), color.a * 0.8 + 0.05 * sin(iTime));
+    fragColor = vec4(color.rgb * stylize(diff * (1.0 - shadow), 2.0) + color.rgb * stylize(rim * 0.5, 2.0), min(fragPos.y / 1.0, 0.4)) * vec4(1.0, 1.5, 2.0, 1.0);
     //fragColor = vec4(vec3(rim), 1.0);
     //fragColor = vec4(normal.xyz, 1.0);
     //fragColor = vec4(vec3(shadow), 1.0);

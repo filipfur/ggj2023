@@ -11,7 +11,8 @@ CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{reso
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    _colorProgram = new lithium::ShaderProgram( "shaders/cartoon.vert", "shaders/borderinput.frag" );
+    _linearDepthProgram = new lithium::ShaderProgram( "shaders/cartoon.vert", "shaders/borderinput.frag" );
+    _colorProgram = new lithium::ShaderProgram( "shaders/cartoon.vert", "shaders/color.frag" );
 
     _shaderProgram = new lithium::ShaderProgram( "shaders/cartoon.vert", "shaders/cartoon.frag" );
     _shaderProgram->setUniform("u_texture_0", 0);
@@ -38,6 +39,7 @@ CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{reso
     _borderShader->setUniform("depthTexture", 1);
     _borderShader->setUniform("normalTexture", 2);
     _borderShader->setUniform("brightTexture", 3);
+    _borderShader->setUniform("waterDetectTexture", 4);
 
     _blurShader = new lithium::ShaderProgram("shaders/screen.vert", "shaders/blur.frag");
     _blurShader->setUniform("u_horizontal", 0);
@@ -72,12 +74,10 @@ CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{reso
         _frameBuffer->createRenderBuffer(lithium::RenderBuffer::Mode::MULTISAMPLED, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
     _frameBuffer->unbind();
 
-    _borderFBO = new lithium::FrameBuffer(resolution, lithium::FrameBuffer::Mode::DEFAULT);
-    _borderFBO->bind();
-        _borderFBO->createTexture(GL_COLOR_ATTACHMENT0, GL_RGBA16F, GL_RGBA, GL_FLOAT);
-        //FIXME to DEFAULT
-        //_borderFBO->createRenderBuffer(lithium::RenderBuffer::Mode::MULTISAMPLED, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
-    _borderFBO->unbind();
+    _waterDetectFBO = new lithium::FrameBuffer(resolution, lithium::FrameBuffer::Mode::DEFAULT);
+    _waterDetectFBO->bind();
+        _waterDetectFBO->createTexture(GL_COLOR_ATTACHMENT0, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+    _waterDetectFBO->unbind();
 
     _horizontalBlurFBO = new lithium::FrameBuffer(resolution, lithium::FrameBuffer::Mode::DEFAULT);
     _horizontalBlurFBO->bind();
@@ -112,7 +112,8 @@ CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{reso
         _normalSkinningShader,
         _lightShader,
         _instShader,
-        _waterProgram
+        _waterProgram,
+        _colorProgram
     });
 }
 
@@ -139,6 +140,29 @@ void CartoonShading::render()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    _waterDetectFBO->bind();
+    {
+        _colorProgram->setUniform("u_color", glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
+        for(auto object : _objects)
+        {
+            if(object->modelInvalidated())
+            {
+                object->updateModel();
+            }
+            _colorProgram->setUniform("u_model", object->model());
+            object->draw();
+        }
+        if(_ocean->modelInvalidated())
+        {
+            _ocean->updateModel();
+        }
+        _colorProgram->setUniform("u_model", _ocean->model());
+        _colorProgram->setUniform("u_color", glm::vec4{0.0f, 0.0f, 0.0f, 1.0f});
+        _ocean->draw();
+    }
+    _waterDetectFBO->bind();
+
 
     glViewport(0, 0, 4096, 4096);
     _depthMapBuffer->bind();
@@ -312,6 +336,8 @@ void CartoonShading::render()
     _borderDepthFBO->bindTexture(GL_COLOR_ATTACHMENT0);
     glActiveTexture(GL_TEXTURE3);
     _horizontalBlurFBO->bindTexture(GL_COLOR_ATTACHMENT0);
+    glActiveTexture(GL_TEXTURE4);
+    _waterDetectFBO->bindTexture(GL_COLOR_ATTACHMENT0);
     _screenMesh->draw();
     glBindVertexArray(0);
 }
