@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <chrono>
 #include <map>
+#include <vector>
 
 #include "lgscore.h"
 #include "scheduledtask.h"

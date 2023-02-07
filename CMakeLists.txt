@@ -15,7 +15,11 @@ file(GLOB SOURCES
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${CMAKE_PROJECT_NAME} lithium WSock32)
+if(WIN32)
+    target_link_libraries(${CMAKE_PROJECT_NAME} lithium WSock32)
+else()
+    target_link_libraries(${CMAKE_PROJECT_NAME} lithium)
+endif()
 
 add_subdirectory(dep/lithium) 
 

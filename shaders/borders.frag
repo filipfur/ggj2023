@@ -6,7 +6,8 @@ uniform sampler2DMS diffuseTexture;
 uniform sampler2D depthTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D brightTexture;
-uniform sampler2D waterDetectTexture;
+uniform sampler2D waterMaskTexture;
+uniform sampler2D terrainDepthTexture;
 uniform vec2 u_resolution;
 
 mat3 sx = mat3( 
@@ -22,8 +23,8 @@ mat3 sy = mat3(
 
 in vec2 TexCoords;
 
-float near_plane = 1.0;
-float far_plane = 100.0;
+float near_plane = 0.1;
+float far_plane = 300.0;
 
 float LinearizeDepth(float depth)
 {
@@ -87,7 +88,8 @@ void main()
 
     vec3 bright = texture(brightTexture, TexCoords).rgb;
 
-    vec3 waterMask = texture(waterDetectTexture, TexCoords).rgb;
+    vec3 waterMask = texture(waterMaskTexture, TexCoords).rgb;
+    vec3 terrainDepth = texture(terrainDepthTexture, TexCoords).rgb;
 
     //vec3 normal = texture(normalTexture, TexCoords).rgb;
 
@@ -114,11 +116,19 @@ void main()
     float exposure = 1.4; 
 
     vec3 color = mix(diffuse + bright, vec3(0.0, 0.0, 0.0), sobelDepth * 1.0);
+
+    tex_offset = vec2(1.0 / textureSize(depthTexture, 0) * 16.0);
+    float waterLine = SobelSampleDepth(waterMaskTexture, TexCoords, vec3(tex_offset, 0.0)) * waterMask.r;
+    waterLine = pow(abs(clamp(waterLine, 0.0, 1.0) * outlineDepthMultiplier), outlineDepthBias);
+
+    color += waterLine * 0.05;
+
     // exposure tone mapping
     color = vec3(1.0) - exp(-color * exposure); // tone mapping
     // gamma correction 
     fragColor = vec4(pow(color, vec3(1.0 / 2.2)), 1.0);
-    //fragColor = vec4(waterMask.rgb, 1.0);
+    //fragColor = vec4(vec3(LinearizeDepth(terrainDepth.r) / far_plane), 1.0);
+
     //fragColor = vec4(vec3(alpha), 1.0);
     //fragColor = vec4(vec3(depth01), 1.0);
     //fragColor = vec4(texture(normalTexture, TexCoords).rgb, 1.0);

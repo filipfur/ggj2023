@@ -68,7 +68,7 @@ public:
         input()->addPressedCallback(GLFW_KEY_ENTER, [this](int mods, int key){
             int action = _menu->enter();
             std::cout << "YIPPI: " << action << std::endl;
-            switch(action)
+            switch(static_cast<Menu::Action>(action))
             {
                 case Menu::Action::Connect:
                     _client = new Client(this, input());
@@ -170,7 +170,7 @@ public:
         return character;
     }
 
-    glm::vec3 mouseToWorldCoordinates() const
+    glm::vec3 mouseToWorldCoordinates() const override
     {
         static glm::vec4 viewport{0.0f, 0.0f, defaultFrameBufferResolution()};
         glm::vec2 mousePos = input()->mousePosition();
@@ -180,7 +180,7 @@ public:
         return glm::unProject(screenPos, _pipeline->camera()->view(), _pipeline->camera()->projection(), viewport);
     }
 
-    float playerToMouseAngle() const
+    float playerToMouseAngle() const override
     {
         return utility::angle(_character->position(), mouseToWorldCoordinates());
     }
