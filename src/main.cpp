@@ -67,7 +67,6 @@ public:
         });
         input()->addPressedCallback(GLFW_KEY_ENTER, [this](int mods, int key){
             int action = _menu->enter();
-            std::cout << "YIPPI: " << action << std::endl;
             switch(static_cast<Menu::Action>(action))
             {
                 case Menu::Action::Connect:

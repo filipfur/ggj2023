@@ -21,6 +21,7 @@ public:
         lithium::Mesh* tiles[numUniqueTiles];
         lithium::Mesh* grass[numUniqueTiles];
         lithium::Mesh* trees[numUniqueTiles];
+        lithium::Mesh* chest;
     } _meshes;
 
     struct Textures
@@ -33,6 +34,7 @@ public:
         lithium::ImageTexture* grassDiffuse;
         lithium::ImageTexture* houseDiffuse;
         lithium::ImageTexture* treeDiffuse;
+        lithium::ImageTexture* chestDiffuse;
     } _textures;
 
     struct Objects
@@ -43,6 +45,7 @@ public:
         lithium::Object* tiles[numUniqueTiles];
         lithium::Object* grass[numUniqueTiles];
         lithium::Object* trees[numUniqueTiles];
+        lithium::Object* chest;
     } _objects;
 
     struct Fonts

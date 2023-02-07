@@ -67,11 +67,11 @@ void main()
     rim = 0.0;
 
     //fragColor = vec4(color.rgb * stylize(diff, 2.0) * (1.0 - shadow) + color.rgb * vec3(rim) * 0.5, color.a);
-    fragColor = vec4(color.rgb * stylize(diff * (1.0 - shadow), 2.0) + color.rgb * stylize(rim * 0.5, 2.0), min(fragPos.y / 1.0, 0.4)) * vec4(2.0, 2.0, 3.5, 1.0);
+    fragColor = vec4(color.rgb * stylize(diff * (1.0 - shadow), 2.0) + color.rgb * stylize(rim * 0.5, 2.0), min(fragPos.y / 1.0, 0.4)) * vec4(3.0, 2.5, 4.5, 1.0);
     //fragColor = vec4(vec3(rim), 1.0);
     //fragColor = vec4(normal.xyz, 1.0);
     //fragColor = vec4(vec3(shadow), 1.0);
-    float brightness = dot(fragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+    float brightness = dot(fragColor.rgb, vec3(0.2126, 0.7152, 0.0722)) * 1.0;
     if(brightness > 1.0)
         brightColor = vec4(fragColor.rgb, 1.0);
     else

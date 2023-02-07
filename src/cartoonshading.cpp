@@ -178,9 +178,14 @@ void CartoonShading::render()
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        _colorProgram->setUniform("iTime", time());
         _colorProgram->setUniform("u_color", glm::vec4{0.0f, 0.0f, 0.0f, 1.0f});
         for(auto object : _objects)
         {
+            if(object->texture() != AssetFactory::getTextures()->dirtDiffuse)
+            {
+                continue;
+            }
             if(object->modelInvalidated())
             {
                 object->updateModel();

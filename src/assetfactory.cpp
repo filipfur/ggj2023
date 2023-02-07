@@ -51,6 +51,7 @@ void AssetFactory::loadMeshes()
         }
         instance._meshes.trees[idx] = lithium::tinyobjloader_load(("assets/tile" + numString + "/treeTile" + numString + ".obj").c_str(), AssetFactory::objectAttributes);
     }
+    instance._meshes.chest = lithium::tinyobjloader_load("assets/chest/chest.obj", AssetFactory::objectAttributes);
 }
 
 void AssetFactory::loadTextures()
@@ -63,6 +64,7 @@ void AssetFactory::loadTextures()
     instance._textures.grassDiffuse = lithium::ImageTexture::load("assets/Grass.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.houseDiffuse = lithium::ImageTexture::load("assets/House.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.treeDiffuse = lithium::ImageTexture::load("assets/Tree.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
+    instance._textures.chestDiffuse = lithium::ImageTexture::load("assets/chest/chest-diffuse.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
     instance._textures.permanentMarkerSdf = lithium::ImageTexture::load("assets/PermanentMarker32.png", GL_RGB, GL_RGBA, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_TEXTURE0, 1, false);
 }
 
@@ -84,6 +86,7 @@ void AssetFactory::loadObjects()
         }
         instance._objects.trees[idx] = new lithium::Object(instance._meshes.trees[idx], instance._textures.treeDiffuse);
     }
+    instance._objects.chest = new lithium::Object(instance._meshes.chest, instance._textures.chestDiffuse);
 }
 
 void AssetFactory::loadFonts()
