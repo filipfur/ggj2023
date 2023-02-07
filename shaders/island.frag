@@ -65,7 +65,7 @@ void main()
     fragColor = vec4(color.rgb * stylize(diff * (1.0 - shadow), 2.0) + color.rgb * stylize(rim * 0.5, 2.0), color.a);
 
     vec3 avg = vec3((fragColor.r + fragColor.g + fragColor.b) / 3.0f);
-    fragColor.rgb = mix(avg * vec3(0.8, 0.4, 0.1) * 0.4, fragColor.grb * vec3(0.55, 0.5, 0.3), u_color.r * smoothstep(0.7, 1.0, 1.0 - length((texCoord.xy - 0.5))));
+    fragColor.rgb = mix(avg * vec3(0.8, 0.4, 0.1) * 0.4, fragColor.grb * vec3(0.75, 0.55, 0.1), u_color.r * smoothstep(0.7, 1.0, 1.0 - length((texCoord.xy - 0.5))));
 
     //fragColor = vec4(vec3(rim), 1.0);
     //fragColor = vec4(normal.xyz, 1.0);

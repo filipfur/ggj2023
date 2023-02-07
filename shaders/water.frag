@@ -67,7 +67,7 @@ void main()
     rim = 0.0;
 
     //fragColor = vec4(color.rgb * stylize(diff, 2.0) * (1.0 - shadow) + color.rgb * vec3(rim) * 0.5, color.a);
-    fragColor = vec4(color.rgb * stylize(diff * (1.0 - shadow), 2.0) + color.rgb * stylize(rim * 0.5, 2.0), min(fragPos.y / 1.0, 0.4)) * vec4(1.0, 1.5, 2.0, 1.0);
+    fragColor = vec4(color.rgb * stylize(diff * (1.0 - shadow), 2.0) + color.rgb * stylize(rim * 0.5, 2.0), min(fragPos.y / 1.0, 0.4)) * vec4(2.0, 2.0, 3.5, 1.0);
     //fragColor = vec4(vec3(rim), 1.0);
     //fragColor = vec4(normal.xyz, 1.0);
     //fragColor = vec4(vec3(shadow), 1.0);
