@@ -157,18 +157,17 @@ void CartoonShading::render()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         _colorProgram->setUniform("iTime", _ocean->time());
         _colorProgram->setUniform("u_color", glm::vec4{0.0f, 0.0f, 0.0f, 1.0f});
-        _staticObjects->forEach([this](lithium::Renderable* renderable){
+        _terrainObjects->forEach([this](lithium::Renderable* renderable){
             auto object = dynamic_cast<lithium::Object*>(renderable);
-            if(object->texture() == AssetFactory::getTextures()->dirtDiffuse)
+            if(object->modelInvalidated())
             {
-                if(object->modelInvalidated())
-                {
-                    object->updateModel();
-                }
-                _colorProgram->setUniform("u_model", object->model());
-                object->draw();
+                object->updateModel();
             }
+            _colorProgram->setUniform("u_model", object->model());
+            //glCullFace(GL_FRONT);
+            object->draw();
         });
+        glCullFace(GL_BACK);
         if(_ocean->modelInvalidated())
         {
             _ocean->updateModel();

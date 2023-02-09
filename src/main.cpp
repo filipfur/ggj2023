@@ -20,8 +20,8 @@ class App : public lithium::Application, public IClient
 {
 public:
     App() : lithium::Application{"GGJ2023 | GG NO RE",
-    //glm::ivec2{1600, 900}, lithium::Application::Mode::MULTISAMPLED_4X, false}
-    glm::ivec2{1920, 1080}, lithium::Application::Mode::MULTISAMPLED_4X, true}
+    glm::ivec2{1600, 900}, lithium::Application::Mode::MULTISAMPLED_4X, false}
+    //glm::ivec2{1920, 1080}, lithium::Application::Mode::MULTISAMPLED_4X, true}
     {
         AssetFactory::loadMeshes();
         AssetFactory::loadTextures();

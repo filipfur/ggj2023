@@ -118,6 +118,7 @@ void main()
     fragColor = vec4(pow(color, vec3(1.0 / 2.2)), 1.0);
     //fragColor = vec4(vec3(LinearizeDepth(terrainDepth.r) / far_plane), 1.0);
     //fragColor = vec4(vec3(waterLine * waterMask.g), 1.0);
+    //fragColor = vec4(waterMask.r, 0, 0, 1);
     //fragColor = vec4(vec3(alpha), 1.0);
     //fragColor = vec4(vec3(depth01), 1.0);
     //fragColor = vec4(texture(normalTexture, TexCoords).rgb, 1.0);
