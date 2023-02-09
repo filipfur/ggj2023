@@ -19,7 +19,9 @@ void serverThreadFunc(Server* server)
 class App : public lithium::Application, public IClient
 {
 public:
-    App() : lithium::Application{"GGJ2023 | GG NO RE", glm::ivec2{1600, 900}, lithium::Application::Mode::MULTISAMPLED_4X, false}
+    App() : lithium::Application{"GGJ2023 | GG NO RE",
+    //glm::ivec2{1600, 900}, lithium::Application::Mode::MULTISAMPLED_4X, false}
+    glm::ivec2{1920, 1080}, lithium::Application::Mode::MULTISAMPLED_4X, true}
     {
         AssetFactory::loadMeshes();
         AssetFactory::loadTextures();
@@ -46,7 +48,7 @@ public:
         _light->setPosition(glm::vec3{8.0f, 64.0f, 8.0f});
         _light->setScale(0.8);
         _pipeline->setLight(_light);
-        _world = new World(_pipeline);
+        _world = new World(_updateables, _pipeline);
         _ocean = new Ocean(_pipeline);
         _menu = new Menu(_pipeline);
 
@@ -261,8 +263,8 @@ public:
 
         _pipeline->camera()->update(dt);
 
-        static float near_plane = 1.0f, far_plane = 300.0f;
-        static glm::mat4 lightProjection{glm::ortho(-1000.0f, 1000.0f, -1000.0f, 1000.0f, near_plane, far_plane)};
+        static float near_plane = 0.1f, far_plane = 300.0f;
+        static glm::mat4 lightProjection{glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, near_plane, far_plane)};
         glm::mat4 lightView{glm::lookAt(_light->position(), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0))};        
         //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
         auto lightSpaceMatrix = lightProjection * lightView;

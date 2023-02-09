@@ -4,7 +4,9 @@
 #include "assetfactory.h"
 #include "options.h"
 
-World::World(lithium::RenderPipeline *pipeline)
+#include "terrainobject.h"
+
+World::World(std::vector<lithium::Updateable*>& updateables, lithium::RenderPipeline *pipeline)
 {
     lithium::Object* block = AssetFactory::getObjects()->tiles[0];
     bool hadSpecialTile{false};
@@ -19,20 +21,24 @@ World::World(lithium::RenderPipeline *pipeline)
             float xOffset = (xIdx - float(numWorldTilesX - 1)/2) * tileSideLength;
             float zOffset = (zIdx - float(numWorldTilesZ - 1)/2) * tileSideLength;
 
-            lithium::Object* tile_clone = AssetFactory::getObjects()->tiles[uniqueTileIdx]->clone();
-            lithium::Object* grass_clone = AssetFactory::getObjects()->grass[uniqueTileIdx]->clone();
-            lithium::Object* tree_close = AssetFactory::getObjects()->trees[uniqueTileIdx]->clone();
+            lithium::Object* tile_clone  = new TerrainObject(*AssetFactory::getObjects()->tiles[uniqueTileIdx]);
+            lithium::Object* grass_clone = new lithium::Object(*AssetFactory::getObjects()->grass[uniqueTileIdx]);
+            lithium::Object* tree_close  = new lithium::Object(*AssetFactory::getObjects()->trees[uniqueTileIdx]);
             tile_clone->setPosition(xOffset, 0.0, zOffset);
             grass_clone->setPosition(xOffset, 0.0, zOffset);
             tree_close->setPosition(xOffset, 0.0, zOffset);
             pipeline->addRenderable(tile_clone);
             pipeline->addRenderable(grass_clone);
             pipeline->addRenderable(tree_close);
+            updateables.push_back(tile_clone);
+            updateables.push_back(grass_clone);
+            updateables.push_back(tree_close);
             if(rand() % 7 == 3)
             {
                 auto chestClone = AssetFactory::getObjects()->chest->clone();
                 chestClone->setPosition(xOffset, 4.0, zOffset)->setRotation(glm::vec3{0.0f, 180.0f, 0.0f});
                 pipeline->addRenderable(chestClone);
+                updateables.push_back(chestClone);
             }
             _tileObjects[zIdx][xIdx] = tile_clone;
         }

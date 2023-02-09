@@ -61,5 +61,6 @@ class BasePipeline : public lithium::RenderPipeline
         lithium::ShaderProgram* _lightShader{nullptr};
         lithium::RenderGroup* _objects;
         lithium::RenderGroup* _staticObjects;
+        lithium::RenderGroup* _terrainObjects;
         lithium::RenderGroup* _skinnedObjects;
 };

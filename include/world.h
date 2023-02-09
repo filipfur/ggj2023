@@ -4,11 +4,12 @@
 #include "options.h"
 #include "glrenderpipeline.h"
 #include "tile.h"
+#include "glupdateable.h"
 
 class World
 {
 public:
-    World(lithium::RenderPipeline* pipeline);
+    World(std::vector<lithium::Updateable*>& updateables, lithium::RenderPipeline* pipeline);
 
     float getElevation(float x, float z) const;
     float getElevation(glm::vec3 v) const;

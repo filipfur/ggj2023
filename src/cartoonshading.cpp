@@ -129,6 +129,7 @@ CartoonShading::~CartoonShading() noexcept
 
 void CartoonShading::render()
 {
+    BasePipeline::render();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -136,7 +137,6 @@ void CartoonShading::render()
     _depthMapBuffer->bind();
     {
         glClear(GL_DEPTH_BUFFER_BIT);
-        glActiveTexture(GL_TEXTURE0); // ?
         _staticObjects->render(_depthShader);
         _skinnedObjects->render(_depthSkinningShader);
     }
@@ -193,24 +193,12 @@ void CartoonShading::render()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
 
-        beforeDiffusePass();
-
-        _staticObjects->forEach([this](lithium::Renderable* renderable){
-            auto object = dynamic_cast<lithium::Object*>(renderable);
-            object->shade(object->texture() == AssetFactory::getTextures()->dirtDiffuse ? _islandProgram : _shaderProgram);
-            object->draw();
-        });
-        /*for(auto object : _skinnedObjects)
-        {
-            object->shade(_skinningShader);
-            object->draw();
-        }*/
+        _terrainObjects->render(_islandProgram);
+        _staticObjects->render(_shaderProgram);
         _skinnedObjects->render(_skinningShader);
         _waterProgram->setUniform("iTime", _ocean->time());
         _ocean->shade(_waterProgram);
         _ocean->draw();
-        
-        afterDiffusePass();
 
 #ifdef WIREFRAME_MODE
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -285,34 +273,11 @@ void CartoonShading::render()
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        beforeBorderPass();
-
-        /*for(auto object : _objects)
-        {
-            object->shade(_normalShader);
-            object->draw();
-        }
-        for(auto skinnedObject : _skinnedObjects)
-        {
-            skinnedObject->shade(_normalSkinningShader);
-            skinnedObject->draw();
-        }*/
+        _terrainObjects->render(_normalShader);
         _staticObjects->render(_normalShader);
         _skinnedObjects->render(_normalSkinningShader);
-
-        afterBorderPass();
     }
     _borderDepthFBO->unbind();
-
-    /*
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    _debugDepthShader->use();
-    _screenMesh->bindVertexArray();
-    glActiveTexture(GL_TEXTURE0);
-    _borderDepthFBO->bindTexture(GL_DEPTH_ATTACHMENT);
-    _screenMesh->drawElements();
-    */
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _borderShader->use();

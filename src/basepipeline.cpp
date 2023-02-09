@@ -1,6 +1,7 @@
 #include "basepipeline.h"
 
 #include "assetfactory.h"
+#include "terrainobject.h"
 //#include <glm/gtc/matrix_transform.hpp>
 
 #define SIMPLE_CAMERA_NEAR 0.1f
@@ -22,8 +23,13 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution) : lithium::RenderPipeli
         return dynamic_cast<lithium::Object*>(renderable);
     });
 
+    _terrainObjects = createRenderGroup([](lithium::Renderable* renderable) {
+        return dynamic_cast<TerrainObject*>(renderable);
+    });
+
     _staticObjects = createRenderGroup([](lithium::Renderable* renderable) {
         return dynamic_cast<lithium::Object*>(renderable)
+            && dynamic_cast<TerrainObject*>(renderable) == nullptr
             && dynamic_cast<lithium::SkinnedObject*>(renderable) == nullptr;
     });
 

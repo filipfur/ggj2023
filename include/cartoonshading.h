@@ -14,26 +14,6 @@ public:
 
     virtual void render() override;
 
-    virtual void beforeDiffusePass()
-    {
-        
-    }
-
-    virtual void afterDiffusePass()
-    {
-        
-    }
-
-    virtual void beforeBorderPass()
-    {
-        
-    }
-
-    virtual void afterBorderPass()
-    {
-        
-    }
-
     void setOcean(lithium::Object* ocean)
     {
         _ocean = ocean;
