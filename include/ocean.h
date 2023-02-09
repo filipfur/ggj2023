@@ -9,6 +9,11 @@ public:
 
     void updateTime(float t);
 
+    lithium::Object* object() const 
+    {
+        return _oceanObject;
+    }
+
 private:
     lithium::Object* _oceanObject{nullptr};
 };

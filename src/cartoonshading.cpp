@@ -118,25 +118,13 @@ CartoonShading::CartoonShading(const glm::ivec2& resolution) : BasePipeline{reso
         _waterProgram,
         _colorProgram
     });
+
+
 }
 
 CartoonShading::~CartoonShading() noexcept
 {
 
-}
-
-void CartoonShading::update(float dt)
-{
-    BasePipeline::update(dt);
-
-    _light->update(dt);
-    std::for_each(_objects.begin(), _objects.end(), [dt](lithium::Object* o){
-        o->update(dt);
-    });
-    std::for_each(_skinnedObjects.begin(), _skinnedObjects.end(), [dt](lithium::SkinnedObject* o){
-        o->update(dt);
-    });
-    _ocean->update(dt);
 }
 
 void CartoonShading::render()
@@ -146,31 +134,20 @@ void CartoonShading::render()
 
     glViewport(0, 0, 4096, 4096);
     _depthMapBuffer->bind();
+    {
         glClear(GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0); // ?
-        for(auto object : _objects)
-        {
-            object->shade(_depthShader);
-            object->draw();
-        }
-        for(auto skinnedObject : _skinnedObjects)
-        {
-            skinnedObject->shade(_depthSkinningShader);
-            skinnedObject->draw();
-        }
+        _staticObjects->render(_depthShader);
+        _skinnedObjects->render(_depthSkinningShader);
+    }
     _depthMapBuffer->unbind();
 
     glViewport(0, 0, _resolution.x, _resolution.y);
-
     _bloomFBO->bind();
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        for(auto object : _objects)
-        {
-            object->shade(_bloomProgram);
-            object->draw();
-        }
+        _staticObjects->render(_bloomProgram);
     }
     _bloomFBO->unbind();
 
@@ -178,21 +155,20 @@ void CartoonShading::render()
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        _colorProgram->setUniform("iTime", time());
+        _colorProgram->setUniform("iTime", _ocean->time());
         _colorProgram->setUniform("u_color", glm::vec4{0.0f, 0.0f, 0.0f, 1.0f});
-        for(auto object : _objects)
-        {
-            if(object->texture() != AssetFactory::getTextures()->dirtDiffuse)
+        _staticObjects->forEach([this](lithium::Renderable* renderable){
+            auto object = dynamic_cast<lithium::Object*>(renderable);
+            if(object->texture() == AssetFactory::getTextures()->dirtDiffuse)
             {
-                continue;
+                if(object->modelInvalidated())
+                {
+                    object->updateModel();
+                }
+                _colorProgram->setUniform("u_model", object->model());
+                object->draw();
             }
-            if(object->modelInvalidated())
-            {
-                object->updateModel();
-            }
-            _colorProgram->setUniform("u_model", object->model());
-            object->draw();
-        }
+        });
         if(_ocean->modelInvalidated())
         {
             _ocean->updateModel();
@@ -219,17 +195,18 @@ void CartoonShading::render()
 
         beforeDiffusePass();
 
-        for(auto object : _objects)
-        {
+        _staticObjects->forEach([this](lithium::Renderable* renderable){
+            auto object = dynamic_cast<lithium::Object*>(renderable);
             object->shade(object->texture() == AssetFactory::getTextures()->dirtDiffuse ? _islandProgram : _shaderProgram);
             object->draw();
-        }
-        for(auto object : _skinnedObjects)
+        });
+        /*for(auto object : _skinnedObjects)
         {
             object->shade(_skinningShader);
             object->draw();
-        }
-        _waterProgram->setUniform("iTime", time());
+        }*/
+        _skinnedObjects->render(_skinningShader);
+        _waterProgram->setUniform("iTime", _ocean->time());
         _ocean->shade(_waterProgram);
         _ocean->draw();
         
@@ -311,7 +288,7 @@ void CartoonShading::render()
         
         beforeBorderPass();
 
-        for(auto object : _objects)
+        /*for(auto object : _objects)
         {
             object->shade(_normalShader);
             object->draw();
@@ -320,7 +297,9 @@ void CartoonShading::render()
         {
             skinnedObject->shade(_normalSkinningShader);
             skinnedObject->draw();
-        }
+        }*/
+        _staticObjects->render(_normalShader);
+        _skinnedObjects->render(_normalSkinningShader);
 
         afterBorderPass();
     }

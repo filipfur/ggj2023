@@ -40,15 +40,18 @@ public:
             //glBindTexture(GL_TEXTURE_2D, 0);
         _zBuffer->unbind();
 
-        auto light = new lithium::Light(AssetFactory::getMeshes()->screen);
+        _light = new lithium::Light(AssetFactory::getMeshes()->screen);
         //light->setTexture(bulbTexture);
-        light->setColor(glm::vec4(0.96f, 0.86f, 0.82f, 1.0f));
-        light->setPosition(glm::vec3{8.0f, 64.0f, 8.0f});
-        light->setScale(0.8);
-        _pipeline->setLight(light);
+        _light->setColor(glm::vec4(0.96f, 0.86f, 0.82f, 1.0f));
+        _light->setPosition(glm::vec3{8.0f, 64.0f, 8.0f});
+        _light->setScale(0.8);
+        _pipeline->setLight(_light);
         _world = new World(_pipeline);
         _ocean = new Ocean(_pipeline);
         _menu = new Menu(_pipeline);
+
+        _updateables.push_back(_light);
+        _updateables.push_back(_ocean->object());
 
         input()->addPressedCallback(GLFW_KEY_ESCAPE, [](int mods, int key){
             exit(0);
@@ -118,12 +121,12 @@ public:
             character = it->second;
             if(character->characterId() != characterId)
             {
-                std::vector<lithium::Object*> objects;
-                std::vector<lithium::SkinnedObject*> skinnedObjects;
-                character->getObjects(objects);
-                character->getSkinnedObjects(skinnedObjects);
-                std::for_each(objects.begin(), objects.end(), [this](lithium::Object* o){_pipeline->removeObject(o);});
-                std::for_each(skinnedObjects.begin(), skinnedObjects.end(), [this](lithium::SkinnedObject* o){_pipeline->removeSkinnedObject(o);});
+                //std::vector<lithium::Object*> objects;
+                //std::vector<lithium::SkinnedObject*> skinnedObjects;
+                //character->getObjects(objects);
+                //character->getSkinnedObjects(skinnedObjects);
+                //std::for_each(objects.begin(), objects.end(), [this](lithium::Object* o){_pipeline->removeObject(o);});
+                //std::for_each(skinnedObjects.begin(), skinnedObjects.end(), [this](lithium::SkinnedObject* o){_pipeline->removeSkinnedObject(o);});
                 if(character == _character)
                 {
                     _character = nullptr;
@@ -158,12 +161,18 @@ public:
         character = _potatoFactory->spawn(clientId);
 
         std::vector<lithium::Object*> objects;
-        character->getObjects(objects);
-        _pipeline->insertObjects(objects);
-
         std::vector<lithium::SkinnedObject*> skinnedObjects;
+        character->getObjects(objects);
         character->getSkinnedObjects(skinnedObjects);
-        _pipeline->insertSkinnedObjects(skinnedObjects);
+
+        std::for_each(objects.begin(), objects.end(), [this](lithium::Object* object) {
+            _pipeline->addRenderable(object);
+        });
+        std::for_each(skinnedObjects.begin(), skinnedObjects.end(), [this](lithium::SkinnedObject* skinnedObject) {
+            _pipeline->addRenderable(skinnedObject);
+        });
+        _updateables.insert(_updateables.end(), objects.begin(), objects.end());
+        _updateables.insert(_updateables.end(), skinnedObjects.begin(), skinnedObjects.end());
 
         _characters[clientId] = character;
         return character;
@@ -250,7 +259,27 @@ public:
         }
         camera->setPosition(camera->target() + glm::vec3{cameraOffsetX, cameraOffsetY, cameraOffsetZ});
 
-        _pipeline->update(dt);
+        _pipeline->camera()->update(dt);
+
+        static float near_plane = 1.0f, far_plane = 300.0f;
+        static glm::mat4 lightProjection{glm::ortho(-1000.0f, 1000.0f, -1000.0f, 1000.0f, near_plane, far_plane)};
+        glm::mat4 lightView{glm::lookAt(_light->position(), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0))};        
+        //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
+        auto lightSpaceMatrix = lightProjection * lightView;
+        _pipeline->setLightSpaceMatrix(lightSpaceMatrix);
+        /*_light->update(dt);
+        std::for_each(_objects.begin(), _objects.end(), [dt](lithium::Object* o){
+            o->update(dt);
+        });
+        std::for_each(_skinnedObjects.begin(), _skinnedObjects.end(), [dt](lithium::SkinnedObject* o){
+            o->update(dt);
+        });
+        _ocean->update(dt);*/
+        for(auto updateable : _updateables)
+        {
+            updateable->update(dt);
+        }
+
         _pipeline->render();
         if(_showMenu) { _menu->render(); }
         if(_server != nullptr)
@@ -284,11 +313,13 @@ public:
     
 private:
     CartoonShading* _pipeline{nullptr};
+    lithium::Light* _light{nullptr};
     World* _world{nullptr};
     Ocean* _ocean{nullptr};
     Menu* _menu{nullptr};
     Client* _client{nullptr};
     Server* _server{nullptr};
+    std::vector<lithium::Updateable*> _updateables;
     std::thread* _serverThread{nullptr};
     Potato* _potatoFactory{nullptr};
     CollisionSystem _collisionSystem;

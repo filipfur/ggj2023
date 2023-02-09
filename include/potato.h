@@ -22,14 +22,14 @@ public:
         _potato->setAnimation("WalkingCycle");
     }
 
-    virtual Potato* clone() const override
-    {
-        return new Potato(*this);
-    }
-
     virtual ~Potato() noexcept
     {
         delete _potato;
+    }
+
+    virtual Potato* clone() const override
+    {
+        return new Potato(*this);
     }
 
     virtual uint8_t characterId() const override { return 0x1; }

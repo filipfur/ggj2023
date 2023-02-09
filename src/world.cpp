@@ -25,14 +25,14 @@ World::World(lithium::RenderPipeline *pipeline)
             tile_clone->setPosition(xOffset, 0.0, zOffset);
             grass_clone->setPosition(xOffset, 0.0, zOffset);
             tree_close->setPosition(xOffset, 0.0, zOffset);
-            pipeline->insertObject(tile_clone);
-            pipeline->insertObject(grass_clone);
-            pipeline->insertObject(tree_close);
+            pipeline->addRenderable(tile_clone);
+            pipeline->addRenderable(grass_clone);
+            pipeline->addRenderable(tree_close);
             if(rand() % 7 == 3)
             {
                 auto chestClone = AssetFactory::getObjects()->chest->clone();
                 chestClone->setPosition(xOffset, 4.0, zOffset)->setRotation(glm::vec3{0.0f, 180.0f, 0.0f});
-                pipeline->insertObject(chestClone);
+                pipeline->addRenderable(chestClone);
             }
             _tileObjects[zIdx][xIdx] = tile_clone;
         }

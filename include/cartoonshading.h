@@ -4,14 +4,13 @@
 #include "basepipeline.h"
 #include "glparticlesystem.h"
 #include "globject.h"
+#include "glrendergroup.h"
 
 class CartoonShading : public BasePipeline
 {
 public:
     CartoonShading(const glm::ivec2& resolution);
     virtual ~CartoonShading() noexcept;
-
-    virtual void update(float dt) override;
 
     virtual void render() override;
 

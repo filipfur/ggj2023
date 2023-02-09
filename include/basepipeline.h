@@ -15,8 +15,6 @@ class BasePipeline : public lithium::RenderPipeline
     public:
         BasePipeline(const glm::ivec2& resolution);
         
-        virtual void update(float dt) override;
-
         virtual void render() override;
 
         lithium::SimpleCamera* camera() const
@@ -41,6 +39,11 @@ class BasePipeline : public lithium::RenderPipeline
             _text->setScale(scale);
         }
 
+        void setLightSpaceMatrix(const glm::mat4 lightSpaceMatrix)
+        {
+            _lightSpaceMatrix = lightSpaceMatrix;
+        }
+
     protected:
         lithium::SimpleCamera* _camera{nullptr};
         lithium::OrthographicCamera* _orthoCamera;
@@ -56,4 +59,7 @@ class BasePipeline : public lithium::RenderPipeline
         lithium::Light* _light{nullptr};
         lithium::Mesh* _screenMesh{nullptr};
         lithium::ShaderProgram* _lightShader{nullptr};
+        lithium::RenderGroup* _objects;
+        lithium::RenderGroup* _staticObjects;
+        lithium::RenderGroup* _skinnedObjects;
 };
