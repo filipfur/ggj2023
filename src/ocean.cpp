@@ -6,7 +6,6 @@
 #include "ocean.h"
 #include "assetfactory.h"
 #include "options.h"
-#include "cartoonshading.h"
 
 Ocean::Ocean(BasePipeline *pipeline)
 {
@@ -14,7 +13,7 @@ Ocean::Ocean(BasePipeline *pipeline)
     _oceanObject->setPosition(0.0, goptions::oceanYBaseOffset, 0.0);
     _oceanObject->setScale(glm::vec3(goptions::oceanSideLengthX / goptions::oceanMeshSideLength, 1.0, goptions::oceanSideLengthZ / goptions::oceanMeshSideLength));
     //oceanObject->setOpacity()
-    dynamic_cast<CartoonShading*>(pipeline)->setOcean(_oceanObject);
+    pipeline->setOcean(_oceanObject);
 }
 
 void Ocean::updateTime(float t)

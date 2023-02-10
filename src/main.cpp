@@ -2,8 +2,8 @@
 #include "lgscore.h"
 
 #include "glapplication.h"
-#include "cartoonshading.h"
 #include "assetfactory.h"
+#include "basepipeline.h"
 #include "world.h"
 #include "menu.h"
 #include "server.h"
@@ -28,7 +28,7 @@ public:
         AssetFactory::loadObjects();
         AssetFactory::loadFonts();
         _potatoFactory = new Potato(AssetFactory::getObjects()->potato);
-        _pipeline = new CartoonShading(defaultFrameBufferResolution());
+        _pipeline = new BasePipeline(defaultFrameBufferResolution());
         
         _zShader = new lithium::ShaderProgram( "shaders/shadowdepth.vert", "shaders/shadowdepth.frag" );
         _zBuffer = new lithium::FrameBuffer(defaultFrameBufferResolution());
@@ -314,7 +314,7 @@ public:
     }
     
 private:
-    CartoonShading* _pipeline{nullptr};
+    BasePipeline* _pipeline{nullptr};
     lithium::Light* _light{nullptr};
     World* _world{nullptr};
     Ocean* _ocean{nullptr};

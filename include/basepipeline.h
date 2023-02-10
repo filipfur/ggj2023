@@ -44,23 +44,55 @@ class BasePipeline : public lithium::RenderPipeline
             _lightSpaceMatrix = lightSpaceMatrix;
         }
 
-    protected:
+        void setOcean(lithium::Object* ocean)
+        {
+            _ocean = ocean;
+        }
+
+
+    private:
         lithium::SimpleCamera* _camera{nullptr};
         lithium::OrthographicCamera* _orthoCamera;
         lithium::UniformBufferObject* _sceneUBO;
         lithium::RenderBuffer *_renderBuffer{nullptr};
-        lithium::FrameBuffer *_depthMapBuffer{nullptr};
+        std::shared_ptr<lithium::FrameBuffer> _shadowMapBuffer{nullptr};
+        std::shared_ptr<lithium::FrameBuffer> _frameBuffer{nullptr};
+        lithium::FrameBuffer *_borderDepthFBO{nullptr};
+        std::shared_ptr<lithium::FrameBuffer> _bloomFBO{nullptr};
+        lithium::FrameBuffer *_horizontalBlurFBO{nullptr};
+        lithium::FrameBuffer *_verticalBlurFBO{nullptr};
+        lithium::FrameBuffer *_intermediateFBO{nullptr};
+        std::shared_ptr<lithium::FrameBuffer> _waterDetectFBO{nullptr};
         lithium::ShaderProgram* _depthShader{nullptr};
         lithium::ShaderProgram* _depthSkinningShader{nullptr};
         lithium::ShaderProgram* _sdfTextShader{nullptr};
         lithium::ShaderProgram* _debugDepthShader{nullptr};
+        lithium::ShaderProgram* _screenMsaaShader{nullptr};
+        lithium::ShaderProgram* _blurShader{nullptr};
+        lithium::ShaderProgram* _borderShader{nullptr};
+        lithium::ShaderProgram* _normalShader{nullptr};
+        lithium::ShaderProgram* _normalSkinningShader{nullptr};
+        lithium::ShaderProgram* _linearDepthProgram{nullptr};
+        lithium::ShaderProgram* _colorProgram{nullptr};
+        lithium::ShaderProgram* _shaderProgram{nullptr};
+        lithium::ShaderProgram* _islandProgram{nullptr};
+        lithium::ShaderProgram* _waterProgram{nullptr};
+        lithium::ShaderProgram* _bloomProgram{nullptr};
+        lithium::ShaderProgram* _skinningShader{nullptr};
+        lithium::ShaderProgram* _instShader{nullptr};
+        lithium::Object* _ocean{nullptr};
         glm::mat4 _lightSpaceMatrix;
         lithium::Text* _text;
         lithium::Light* _light{nullptr};
         lithium::Mesh* _screenMesh{nullptr};
         lithium::ShaderProgram* _lightShader{nullptr};
-        lithium::RenderGroup* _objects;
-        lithium::RenderGroup* _staticObjects;
-        lithium::RenderGroup* _terrainObjects;
-        lithium::RenderGroup* _skinnedObjects;
+        std::shared_ptr<lithium::RenderGroup> _objects;
+        std::shared_ptr<lithium::RenderGroup> _staticObjects;
+        std::shared_ptr<lithium::RenderGroup> _terrainObjects;
+        std::shared_ptr<lithium::RenderGroup> _skinnedObjects;
+
+        std::shared_ptr<lithium::RenderStage> _shadowMapStage;
+        std::shared_ptr<lithium::RenderStage> _bloomStage;
+        std::shared_ptr<lithium::RenderStage> _waterDetectStage;
+        std::shared_ptr<lithium::RenderStage> _mainStage;
 };
