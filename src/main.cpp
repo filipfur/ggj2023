@@ -33,10 +33,11 @@ public:
         _zShader = new lithium::ShaderProgram( "shaders/shadowdepth.vert", "shaders/shadowdepth.frag" );
         _zBuffer = new lithium::FrameBuffer(defaultFrameBufferResolution());
         _zBuffer->bind();
-            _zBuffer->createTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_NEAREST, GL_CLAMP_TO_BORDER);
+            _zBuffer->createTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
             glDrawBuffer(GL_NONE);
             glReadBuffer(GL_NONE);
-            _zBuffer->bindTexture(GL_DEPTH_ATTACHMENT);
+            _zBuffer->texture(GL_DEPTH_ATTACHMENT)->setWrap(GL_CLAMP_TO_BORDER);
+            //_zBuffer->bindTexture(GL_DEPTH_ATTACHMENT);
             //float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
             //glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
             //glBindTexture(GL_TEXTURE_2D, 0);
@@ -217,7 +218,7 @@ public:
         _zBuffer->bind();
         {
             glClear(GL_DEPTH_BUFFER_BIT);
-            glActiveTexture(GL_TEXTURE0);
+            lithium::Texture<unsigned char>::activate(GL_TEXTURE0);
             static auto oc = AssetFactory::getObjects()->ocean->clone();
             oc->setScale(glm::vec3{goptions::oceanSideLengthX / goptions::oceanMeshSideLength, 1.0, goptions::oceanSideLengthZ / goptions::oceanMeshSideLength});
             oc->shade(_zShader);

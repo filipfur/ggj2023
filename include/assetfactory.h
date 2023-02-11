@@ -14,43 +14,43 @@ class AssetFactory
 public:
     struct Meshes
     {
-        lithium::Mesh* screen;
-        lithium::Mesh* block;
-        lithium::Mesh* potato;
-        lithium::Mesh* ocean;
-        lithium::Mesh* tiles[goptions::numUniqueTiles];
-        lithium::Mesh* grass[goptions::numUniqueTiles];
-        lithium::Mesh* trees[goptions::numUniqueTiles];
-        lithium::Mesh* chest;
+        std::shared_ptr<lithium::Mesh> screen;
+        std::shared_ptr<lithium::Mesh> block;
+        std::shared_ptr<lithium::Mesh> potato;
+        std::shared_ptr<lithium::Mesh> ocean;
+        std::shared_ptr<lithium::Mesh> tiles[goptions::numUniqueTiles];
+        std::shared_ptr<lithium::Mesh> grass[goptions::numUniqueTiles];
+        std::shared_ptr<lithium::Mesh> trees[goptions::numUniqueTiles];
+        std::shared_ptr<lithium::Mesh> chest;
     } _meshes;
 
     struct Textures
     {
-        lithium::ImageTexture* permanentMarkerSdf;
-        lithium::ImageTexture* blockDiffuse;
-        lithium::ImageTexture* potatoDiffuse;
-        lithium::ImageTexture* oceanDiffuse;
-        lithium::ImageTexture* dirtDiffuse;
-        lithium::ImageTexture* grassDiffuse;
-        lithium::ImageTexture* houseDiffuse;
-        lithium::ImageTexture* treeDiffuse;
-        lithium::ImageTexture* chestDiffuse;
+        std::shared_ptr<lithium::ImageTexture> permanentMarkerSdf;
+        std::shared_ptr<lithium::ImageTexture> blockDiffuse;
+        std::shared_ptr<lithium::ImageTexture> potatoDiffuse;
+        std::shared_ptr<lithium::ImageTexture> oceanDiffuse;
+        std::shared_ptr<lithium::ImageTexture> dirtDiffuse;
+        std::shared_ptr<lithium::ImageTexture> grassDiffuse;
+        std::shared_ptr<lithium::ImageTexture> houseDiffuse;
+        std::shared_ptr<lithium::ImageTexture> treeDiffuse;
+        std::shared_ptr<lithium::ImageTexture> chestDiffuse;
     } _textures;
 
     struct Objects
     {
-        lithium::SkinnedObject* potato;
-        lithium::Object* block;
-        lithium::Object* ocean;
-        lithium::Object* tiles[goptions::numUniqueTiles];
-        lithium::Object* grass[goptions::numUniqueTiles];
-        lithium::Object* trees[goptions::numUniqueTiles];
-        lithium::Object* chest;
+        std::shared_ptr<lithium::SkinnedObject> potato;
+        std::shared_ptr<lithium::Object> block;
+        std::shared_ptr<lithium::Object> ocean;
+        std::shared_ptr<lithium::Object> tiles[goptions::numUniqueTiles];
+        std::shared_ptr<lithium::Object> grass[goptions::numUniqueTiles];
+        std::shared_ptr<lithium::Object> trees[goptions::numUniqueTiles];
+        std::shared_ptr<lithium::Object> chest;
     } _objects;
 
     struct Fonts
     {
-        lithium::Font* permanentMarker;
+        std::shared_ptr<lithium::Font> permanentMarker;
     } _fonts;
 
     MapSegment* _mapSegments[goptions::numUniqueTiles];

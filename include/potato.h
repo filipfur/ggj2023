@@ -9,7 +9,7 @@ class Potato : public Character
 {
 public:
 
-    Potato(lithium::SkinnedObject* potato) 
+    Potato(std::shared_ptr<lithium::SkinnedObject> potato) 
         : _potato{potato}
     {
         //_potato->animation("shooting")->setLooping(false);
@@ -24,7 +24,7 @@ public:
 
     virtual ~Potato() noexcept
     {
-        delete _potato;
+        _potato = nullptr;
     }
 
     virtual Potato* clone() const override
@@ -41,7 +41,7 @@ public:
 
     virtual void getSkinnedObjects(std::vector<lithium::SkinnedObject*>& skinnedObjects) override
     {
-        skinnedObjects.insert(skinnedObjects.end(), {_potato});
+        skinnedObjects.insert(skinnedObjects.end(), {_potato.get()});
     }
 
     virtual void onServerUpdate(uint8_t state, uint8_t health, const glm::vec3& position, const glm::vec3& delta,
@@ -113,11 +113,11 @@ public:
 
     virtual lithium::Object* object() const override
     {
-        return _potato;
+        return _potato.get();
     }
 
 private:
-    lithium::SkinnedObject* _potato;
+    std::shared_ptr<lithium::SkinnedObject> _potato;
     float _actionYOffset{0.0f};
     float _pluggSize;
 };

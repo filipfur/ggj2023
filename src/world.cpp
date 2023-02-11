@@ -8,7 +8,7 @@
 
 World::World(std::vector<lithium::Updateable*>& updateables, lithium::RenderPipeline *pipeline)
 {
-    lithium::Object* block = AssetFactory::getObjects()->tiles[0];
+    std::shared_ptr<lithium::Object> block = AssetFactory::getObjects()->tiles[0];
     bool hadSpecialTile{false};
     for (int zIdx = 0; zIdx < goptions::numWorldTilesZ; zIdx++) {
         for (int xIdx = 0; xIdx < goptions::numWorldTilesX; xIdx++) {
@@ -43,7 +43,6 @@ World::World(std::vector<lithium::Updateable*>& updateables, lithium::RenderPipe
             _tileObjects[zIdx][xIdx] = tile_clone;
         }
     }
-    delete block;
 }
 
 float World::getElevation(float x, float z) const

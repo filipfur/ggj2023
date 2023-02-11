@@ -116,6 +116,7 @@ void main()
     color = vec3(1.0) - exp(-color * exposure); // tone mapping
     // gamma correction 
     fragColor = vec4(pow(color, vec3(1.0 / 2.2)), 1.0);
+    //fragColor = vec4(diffuse, 1);
     //fragColor = vec4(vec3(LinearizeDepth(terrainDepth.r) / far_plane), 1.0);
     //fragColor = vec4(vec3(waterLine * waterMask.g), 1.0);
     //fragColor = vec4(waterMask.r, 0, 0, 1);

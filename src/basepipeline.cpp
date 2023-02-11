@@ -15,12 +15,28 @@ static constexpr attr UV{attr::VEC2};
 static constexpr attr BONE_IDS{attr::VEC4};
 static constexpr attr BONE_WEIGHTS{attr::VEC4};
 
+static const std::vector<attr> screenMeshAttributes = { POSITION, NORMAL, UV };
+
+static const std::vector<GLfloat> screenMeshVertices = {
+    -1.0f, -1.0f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
+    -1.0f,  1.0f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 1.0,
+    1.0f,  1.0f, 0.0f,	    0.0f, 1.0f, 0.0f,	1.0, 1.0,
+    1.0f, -1.0f, 0.0f, 	    0.0f, 1.0f, 0.0f,	1.0, 0.0f,
+};
+
+static const std::vector<GLuint> screenMeshIndices = {
+    0, 2, 1,
+    0, 3, 2
+};
+
 BasePipeline::BasePipeline(const glm::ivec2& resolution)
     : lithium::RenderPipeline{resolution},
     _shadowMapBuffer{std::make_shared<lithium::FrameBuffer>(glm::ivec2{4096})},
     _frameBuffer{std::make_shared<lithium::FrameBuffer>(resolution, lithium::FrameBuffer::Mode::MULTISAMPLED)},
     _bloomFBO{std::make_shared<lithium::FrameBuffer>(resolution, lithium::FrameBuffer::Mode::DEFAULT)},
-    _waterDetectFBO{std::make_shared<lithium::FrameBuffer>(resolution, lithium::FrameBuffer::Mode::DEFAULT)}
+    _waterDetectFBO{std::make_shared<lithium::FrameBuffer>(resolution, lithium::FrameBuffer::Mode::DEFAULT)},
+    _intermediateFBO{std::make_shared<lithium::FrameBuffer>(resolution, lithium::FrameBuffer::Mode::DEFAULT)},
+    _screenMesh{std::make_shared<lithium::Mesh>(screenMeshAttributes, screenMeshVertices, screenMeshIndices)}
 {
     _camera = new lithium::SimpleCamera(glm::perspective(SIMPLE_CAMERA_FOV, (float)resolution.x / (float)resolution.y, SIMPLE_CAMERA_NEAR, SIMPLE_CAMERA_FAR));
     
@@ -41,18 +57,7 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
     _skinnedObjects = createRenderGroup([](lithium::Renderable* renderable) {
         return dynamic_cast<lithium::SkinnedObject*>(renderable);
     });
-    
-    std::vector<attr> attributes{POSITION, NORMAL, UV};
-    _screenMesh = new lithium::Mesh(attributes, {
-        -1.0, -1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-        -1.0,  1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 1.0,
-        1.0,  1.0, 0.0f,	0.0f, 1.0f, 0.0f,	1.0, 1.0,
-        1.0, -1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	1.0, 0.0f,
-    },
-    {
-        0, 2, 1,
-        0, 3, 2
-    });
+
     _lightShader = new lithium::ShaderProgram("shaders/light.vert", "shaders/light.frag");
     _depthShader = new lithium::ShaderProgram( "shaders/shadowdepth.vert", "shaders/shadowdepth.frag" );
     _depthSkinningShader = new lithium::ShaderProgram( "shaders/shadowdepthskinning.vert", "shaders/shadowdepth.frag" );
@@ -63,13 +68,14 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
 
     _shadowMapBuffer->bind();
     {
-        _shadowMapBuffer->createTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_NEAREST, GL_CLAMP_TO_BORDER);
+        _shadowMapBuffer->createTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
-        _shadowMapBuffer->bindTexture(GL_DEPTH_ATTACHMENT);
+        _shadowMapBuffer->texture(GL_DEPTH_ATTACHMENT)->setWrap(GL_CLAMP_TO_BORDER)->setBorderColor(glm::vec4{1.0f, 1.0f, 1.0f, 1.0f});
+        /*_shadowMapBuffer->bindTexture(GL_DEPTH_ATTACHMENT);
         float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);*/
     }
     _shadowMapBuffer->unbind();
 
@@ -127,7 +133,7 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
     _borderShader->setUniform("waterMaskTexture", 4);
     _borderShader->setUniform("terrainDepthTexture", 5);
 
-    _blurShader = new lithium::ShaderProgram("shaders/screen.vert", "shaders/blur.frag");
+    _blurShader = std::make_shared<lithium::ShaderProgram>("shaders/screen.vert", "shaders/blur.frag");
     _blurShader->setUniform("u_horizontal", 0);
     _blurShader->setUniform("diffuseTexture", 0);
 
@@ -142,13 +148,14 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
     _borderDepthFBO->bind();
     {
         _borderDepthFBO->createTexture(GL_COLOR_ATTACHMENT0, GL_RGBA16F, GL_RGBA, GL_FLOAT);
-        _borderDepthFBO->createTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_NEAREST, GL_CLAMP_TO_BORDER);
+        _borderDepthFBO->createTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
+        _borderDepthFBO->texture(GL_DEPTH_ATTACHMENT)->setWrap(GL_CLAMP_TO_BORDER)->setBorderColor(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f });
         //glDrawBuffer(GL_NONE);
         //glReadBuffer(GL_NONE);
-        _borderDepthFBO->bindTexture(GL_DEPTH_ATTACHMENT);
+        /*_borderDepthFBO->bindTexture(GL_DEPTH_ATTACHMENT);
         float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);*/
         /*_borderDepthFBO->declareBuffers();
         _borderDepthFBO->createRenderBuffer(lithium::RenderBuffer::Mode::DEFAULT, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);*/
     }
@@ -163,32 +170,20 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
 
     _waterDetectFBO->bind();
         _waterDetectFBO->createTexture(GL_COLOR_ATTACHMENT0, GL_RGBA16F, GL_RGBA, GL_FLOAT);
-        _waterDetectFBO->createTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_NEAREST, GL_CLAMP_TO_BORDER);
+        _waterDetectFBO->createTexture(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT);
         //_waterDetectFBO->createRenderBuffer(lithium::RenderBuffer::Mode::DEFAULT, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
     _waterDetectFBO->unbind();
 
-    _horizontalBlurFBO = new lithium::FrameBuffer(resolution, lithium::FrameBuffer::Mode::DEFAULT);
-    _horizontalBlurFBO->bind();
-        _horizontalBlurFBO->createTexture(GL_COLOR_ATTACHMENT0, GL_RGBA16F, GL_RGBA, GL_FLOAT);
-        //_horizontalBlurFBO->createRenderBuffer(lithium::RenderBuffer::Mode::MULTISAMPLED, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
-    _horizontalBlurFBO->unbind();
-
-    _verticalBlurFBO = new lithium::FrameBuffer(resolution, lithium::FrameBuffer::Mode::DEFAULT);
-    _verticalBlurFBO->bind();
-        _verticalBlurFBO->createTexture(GL_COLOR_ATTACHMENT0, GL_RGBA16F, GL_RGBA, GL_FLOAT);
-        //_verticalBlurFBO->createRenderBuffer(lithium::RenderBuffer::Mode::MULTISAMPLED, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
-    _verticalBlurFBO->unbind();
-
-    _bloomFBO->bind();
-        _bloomFBO->createTexture(GL_COLOR_ATTACHMENT0, GL_RGBA16F, GL_RGBA, GL_FLOAT);
-    _bloomFBO->unbind();
-
-    _intermediateFBO = new lithium::FrameBuffer(resolution, lithium::FrameBuffer::Mode::DEFAULT);
     _intermediateFBO->bind();
         _intermediateFBO->createTexture(GL_COLOR_ATTACHMENT0, GL_RGBA16F, GL_RGBA, GL_FLOAT);
         _intermediateFBO->createTexture(GL_COLOR_ATTACHMENT1, GL_RGBA16F, GL_RGBA, GL_FLOAT);
         _intermediateFBO->declareBuffers();
     _intermediateFBO->unbind();
+
+
+    _bloomFBO->bind();
+        _bloomFBO->createTexture(GL_COLOR_ATTACHMENT0, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+    _bloomFBO->unbind();
 
     _sceneUBO = new lithium::UniformBufferObject(244, "SceneBlock", 0);
     _sceneUBO->bindBufferBase({
@@ -203,55 +198,48 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
         _colorProgram
     });
 
-    _shadowMapStage = createRenderStage(_shadowMapBuffer,
+    _shadowMapStage = addRenderStage(std::make_shared<lithium::RenderStage>(_shadowMapBuffer,
         glm::ivec4{0, 0, 4096, 4096},
         [this](){
         glClear(GL_DEPTH_BUFFER_BIT);
         _staticObjects->render(_depthShader);
         _skinnedObjects->render(_depthSkinningShader);
-    });
+    }));
 
     glm::ivec4 viewport{0, 0, _resolution.x, _resolution.y};
 
-    _bloomStage = createRenderStage(_bloomFBO, viewport, [this](){
+    _bloomStage = addRenderStage(std::make_shared<lithium::RenderStage>(_bloomFBO, viewport, [this](){
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         _staticObjects->render(_bloomProgram);
-    });
+    }));
 
-    _waterDetectStage = createRenderStage(_waterDetectFBO, viewport, [this](){
+    _waterDetectStage = addRenderStage(std::make_shared<lithium::RenderStage>(_waterDetectFBO, viewport, [this](){
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         _colorProgram->setUniform("iTime", _ocean->time());
         _colorProgram->setUniform("u_color", glm::vec4{0.0f, 0.0f, 0.0f, 1.0f});
         _terrainObjects->forEach([this](lithium::Renderable* renderable){
             auto object = dynamic_cast<lithium::Object*>(renderable);
-            if(object->modelInvalidated())
-            {
-                object->updateModel();
-            }
+            if(object->modelInvalidated()) { object->updateModel(); }
             _colorProgram->setUniform("u_model", object->model());
             //glCullFace(GL_FRONT);
             object->draw();
         });
         glCullFace(GL_BACK);
-        if(_ocean->modelInvalidated())
-        {
-            _ocean->updateModel();
-        }
+        if(_ocean->modelInvalidated()) { _ocean->updateModel(); }
         _colorProgram->setUniform("u_model", _ocean->model());
         _colorProgram->setUniform("u_color", glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
         //glDepthFunc(GL_LESS);
         _ocean->draw();
         //glDepthFunc(GL_LESS);
-    });
+    }));
 
-    _mainStage = createRenderStage(_frameBuffer, viewport, [this](){
+    _mainStage = addRenderStage(std::make_shared<lithium::RenderStage>(_frameBuffer, viewport, [this](){
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glActiveTexture(GL_TEXTURE1);
-        _shadowMapBuffer->bindTexture(GL_DEPTH_ATTACHMENT);
+        _shadowMapBuffer->bindTexture(GL_DEPTH_ATTACHMENT, GL_TEXTURE1);
 
 #ifdef WIREFRAME_MODE
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -282,7 +270,10 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
         GL_COLOR_ATTACHMENT1,
         GL_COLOR_BUFFER_BIT,
         GL_NEAREST);
-    });
+    }));
+
+    _blurStage = std::make_shared<lithium::ExBlurStage>(viewport, _screenMesh, _intermediateFBO->texture(GL_COLOR_ATTACHMENT1), _blurShader);
+    
 }
 
 void BasePipeline::render()
@@ -312,46 +303,7 @@ void BasePipeline::render()
 
     _mainStage->render();
 
-    _blurShader->use();
-    _blurShader->setResolution(glm::vec2(_resolution.x, _resolution.y));
-    bool firstIteration{true};
-    for(int i{0}; i < 5; ++i)
-    {
-        _blurShader->setUniform("u_horizontal", 0);
-        _verticalBlurFBO->bind();
-        {
-            //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            _screenMesh->bind();
-            glActiveTexture(GL_TEXTURE0);
-            if(firstIteration)
-            {
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                _intermediateFBO->bindTexture(GL_COLOR_ATTACHMENT1);
-                //firstIteration = false;
-            }
-            else
-            {
-                _horizontalBlurFBO->bindTexture(GL_COLOR_ATTACHMENT0);
-            }
-            _screenMesh->draw();
-        }
-        _verticalBlurFBO->unbind();
-        _blurShader->setUniform("u_horizontal", 1);
-        _horizontalBlurFBO->bind();
-        {
-            //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            if(firstIteration)
-            {
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                firstIteration = false;
-            }
-            _screenMesh->bind();
-            glActiveTexture(GL_TEXTURE0);
-            _verticalBlurFBO->bindTexture(GL_COLOR_ATTACHMENT0);
-            _screenMesh->draw();
-        }
-        _horizontalBlurFBO->unbind();
-    }
+    _blurStage->render();
 
     //static lithium::ImageTexture* borderMap = lithium::ImageTexture::load("assets/swagbot/BorderMap.png", GL_SRGB, GL_RGBA, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_TEXTURE2);
 
@@ -374,18 +326,13 @@ void BasePipeline::render()
     _borderShader->use();
     _borderShader->setResolution(glm::vec2(_resolution.x, _resolution.y));
     _screenMesh->bind();
-    glActiveTexture(GL_TEXTURE0);
-    _frameBuffer->bindTexture(GL_COLOR_ATTACHMENT0);
-    glActiveTexture(GL_TEXTURE1);
-    _borderDepthFBO->bindTexture(GL_DEPTH_ATTACHMENT);
-    glActiveTexture(GL_TEXTURE2);
-    _borderDepthFBO->bindTexture(GL_COLOR_ATTACHMENT0);
-    glActiveTexture(GL_TEXTURE3);
-    _horizontalBlurFBO->bindTexture(GL_COLOR_ATTACHMENT0);
-    glActiveTexture(GL_TEXTURE4);
-    _waterDetectFBO->bindTexture(GL_COLOR_ATTACHMENT0);
-    glActiveTexture(GL_TEXTURE5);
-    _waterDetectFBO->bindTexture(GL_DEPTH_ATTACHMENT);
+    _frameBuffer->bindTexture(GL_COLOR_ATTACHMENT0, GL_TEXTURE0);
+    _borderDepthFBO->bindTexture(GL_DEPTH_ATTACHMENT, GL_TEXTURE1);
+    _borderDepthFBO->bindTexture(GL_COLOR_ATTACHMENT0, GL_TEXTURE2);
+    //glBindTexture(GL_TEXTURE_2D, _blurStage->outputTexture()->id());
+    _blurStage->outputTexture()->bind(GL_TEXTURE3);
+    _waterDetectFBO->bindTexture(GL_COLOR_ATTACHMENT0, GL_TEXTURE4);
+    _waterDetectFBO->bindTexture(GL_DEPTH_ATTACHMENT, GL_TEXTURE5);
     _screenMesh->draw();
     glBindVertexArray(0);
 }

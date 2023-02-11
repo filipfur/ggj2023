@@ -5,7 +5,7 @@
 class TerrainObject : public lithium::Object
 {
 public:
-    TerrainObject(lithium::Mesh* mesh, lithium::ImageTexture* diffuseTexture) : lithium::Object{mesh, diffuseTexture}
+    TerrainObject(std::shared_ptr<lithium::Mesh> mesh, const std::vector<lithium::Object::TexturePointer>& textures) : lithium::Object{mesh, textures}
     {
 
     }

@@ -20,19 +20,24 @@ static constexpr attr BONE_WEIGHTS{attr::VEC4};
 const std::vector<attr> AssetFactory::objectAttributes{POSITION, NORMAL, UV};
 const std::vector<attr> AssetFactory::modelAttributes{POSITION, NORMAL, UV, BONE_IDS, BONE_WEIGHTS};
 
+static const std::vector<attr> screenMeshAttributes = { POSITION, NORMAL, UV };
+
+static const std::vector<GLfloat> screenMeshVertices = {
+    -1.0f, -1.0f, +0.0f, 	+0.0f, +1.0f, +0.0f,	+0.0f, +0.0f,
+    -1.0f, +1.0f, +0.0f, 	+0.0f, +1.0f, +0.0f,	+0.0f, +1.0f,
+    +1.0f, +1.0f, +0.0f,	+0.0f, +1.0f, +0.0f,	+1.0f, +1.0f,
+    +1.0f, -1.0f, +0.0f, 	+0.0f, +1.0f, +0.0f,	+1.0f, +0.0f,
+};
+
+static const std::vector<GLuint> screenMeshIndices = {
+    0, 2, 1,
+    0, 3, 2
+};
+
 void AssetFactory::loadMeshes()
 {
     AssetFactory& instance = getInstance();
-    instance._meshes.screen = new lithium::Mesh({POSITION, NORMAL, UV, attr::VEC3},{
-        -1.0f, -1.0f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,    1.0f, 0.0f, 0.0f,
-        -1.0f,  1.0f, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 1.0,     0.0f, 1.0f, 0.0f,
-        1.0f,  1.0f, 0.0f,	    0.0f, 1.0f, 0.0f,	1.0, 1.0,      1.0f, 1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f, 	    0.0f, 1.0f, 0.0f,	1.0, 0.0f,     0.0f, 1.0f, 1.0f 
-    },
-    {
-        0, 2, 1,
-        0, 3, 2
-    });
+    instance._meshes.screen = std::make_shared<lithium::Mesh>(screenMeshAttributes, screenMeshVertices, screenMeshIndices);
     instance._meshes.block = lithium::tinyobjloader_load("assets/block.obj", AssetFactory::objectAttributes);
     instance._meshes.potato = lithium::tinyobjloader_load("assets/player/PlayerStatic.obj", AssetFactory::objectAttributes);
     instance._meshes.ocean = lithium::tinyobjloader_load("assets/ocean/Ocean.obj", AssetFactory::objectAttributes);
@@ -57,42 +62,43 @@ void AssetFactory::loadMeshes()
 void AssetFactory::loadTextures()
 {
     AssetFactory& instance = getInstance();
-    instance._textures.blockDiffuse = lithium::ImageTexture::load("assets/Kraxbox_logo_lithium_metal_2ff2069c-b84a-426c-bf92-e9831105a5df.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
-    instance._textures.potatoDiffuse = lithium::ImageTexture::load("assets/Potato.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
-    instance._textures.oceanDiffuse = lithium::ImageTexture::load("assets/Ocean/ocean.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
-    instance._textures.dirtDiffuse = lithium::ImageTexture::load("assets/Dirt.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
-    instance._textures.grassDiffuse = lithium::ImageTexture::load("assets/Grass.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
-    instance._textures.houseDiffuse = lithium::ImageTexture::load("assets/House.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
-    instance._textures.treeDiffuse = lithium::ImageTexture::load("assets/Tree.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
-    instance._textures.chestDiffuse = lithium::ImageTexture::load("assets/chest/chest-diffuse.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT);
-    instance._textures.permanentMarkerSdf = lithium::ImageTexture::load("assets/PermanentMarker32.png", GL_RGB, GL_RGBA, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_TEXTURE0, 1, false);
+    instance._textures.blockDiffuse.reset(lithium::ImageTexture::load("assets/Kraxbox_logo_lithium_metal_2ff2069c-b84a-426c-bf92-e9831105a5df.png", GL_SRGB, GL_RGB));
+    instance._textures.potatoDiffuse.reset(lithium::ImageTexture::load("assets/Potato.png", GL_SRGB, GL_RGB));
+    instance._textures.oceanDiffuse.reset(lithium::ImageTexture::load("assets/Ocean/ocean.png", GL_SRGB, GL_RGB));
+    instance._textures.oceanDiffuse->setWrap(GL_REPEAT);
+    instance._textures.dirtDiffuse.reset(lithium::ImageTexture::load("assets/Dirt.png", GL_SRGB, GL_RGB));
+    instance._textures.grassDiffuse.reset(lithium::ImageTexture::load("assets/Grass.png", GL_SRGB, GL_RGB));
+    instance._textures.houseDiffuse.reset(lithium::ImageTexture::load("assets/House.png", GL_SRGB, GL_RGB));
+    instance._textures.treeDiffuse.reset(lithium::ImageTexture::load("assets/Tree.png", GL_SRGB, GL_RGB));
+    instance._textures.chestDiffuse.reset(lithium::ImageTexture::load("assets/chest/chest-diffuse.png", GL_SRGB, GL_RGB));
+    instance._textures.permanentMarkerSdf.reset(lithium::ImageTexture::load("assets/PermanentMarker32.png", GL_RGB, GL_RGBA, 1, false));
 }
 
 void AssetFactory::loadObjects()
 {
     AssetFactory& instance = getInstance();
-    instance._objects.block = new lithium::Object(instance._meshes.block, instance._textures.blockDiffuse);
-    instance._objects.potato =  instance._gltfLoader.loadSkinnedObject("assets/player/Player.gltf"); //new lithium::Object(instance._meshes.potato, instance._textures.potatoDiffuse);
-    instance._objects.ocean = new lithium::Object(instance._meshes.ocean, instance._textures.oceanDiffuse);
+    instance._objects.block.reset(new lithium::Object(instance._meshes.block, {instance._textures.blockDiffuse}));
+    instance._objects.potato = instance._gltfLoader.loadSkinnedObject("assets/player/Player.gltf"); //std::make_shared<lithium::Object>(instance._meshes.potato, instance._textures.potatoDiffuse);
+    instance._objects.ocean.reset(new lithium::Object(instance._meshes.ocean, {instance._textures.oceanDiffuse}));
     for (int idx = 0; idx < goptions::numUniqueTiles; idx++) {
-        instance._objects.tiles[idx] = new lithium::Object(instance._meshes.tiles[idx], instance._textures.dirtDiffuse);
+        instance._objects.tiles[idx].reset(new lithium::Object(instance._meshes.tiles[idx], {instance._textures.dirtDiffuse}));
         if(idx == 3)
         {
-            instance._objects.grass[idx] = new lithium::Object(instance._meshes.grass[idx], instance._textures.houseDiffuse);
+            instance._objects.grass[idx].reset(new lithium::Object(instance._meshes.grass[idx], {instance._textures.houseDiffuse}));
         }
         else
         {
-            instance._objects.grass[idx] = new lithium::Object(instance._meshes.grass[idx], instance._textures.grassDiffuse);
+            instance._objects.grass[idx].reset(new lithium::Object(instance._meshes.grass[idx], {instance._textures.grassDiffuse}));
         }
-        instance._objects.trees[idx] = new lithium::Object(instance._meshes.trees[idx], instance._textures.treeDiffuse);
+        instance._objects.trees[idx].reset(new lithium::Object(instance._meshes.trees[idx], {instance._textures.treeDiffuse}));
     }
-    instance._objects.chest = new lithium::Object(instance._meshes.chest, instance._textures.chestDiffuse);
+    instance._objects.chest.reset(new lithium::Object(instance._meshes.chest, {instance._textures.chestDiffuse}));
 }
 
 void AssetFactory::loadFonts()
 {
     AssetFactory& instance = getInstance();
-    instance._fonts.permanentMarker = new lithium::Font(instance._textures.permanentMarkerSdf, "assets/PermanentMarker32.json");
+    instance._fonts.permanentMarker = std::make_shared<lithium::Font>(instance._textures.permanentMarkerSdf, "assets/PermanentMarker32.json");
 }
 
 const AssetFactory::Meshes* AssetFactory::getMeshes()

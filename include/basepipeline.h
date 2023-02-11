@@ -9,6 +9,7 @@
 #include "gllight.h"
 #include "glorthographiccamera.h"
 #include "gltext.h"
+#include "ex/glblurstage.h"
 
 class BasePipeline : public lithium::RenderPipeline
 {
@@ -56,19 +57,17 @@ class BasePipeline : public lithium::RenderPipeline
         lithium::UniformBufferObject* _sceneUBO;
         lithium::RenderBuffer *_renderBuffer{nullptr};
         std::shared_ptr<lithium::FrameBuffer> _shadowMapBuffer{nullptr};
+        std::shared_ptr<lithium::FrameBuffer> _intermediateFBO{nullptr};
         std::shared_ptr<lithium::FrameBuffer> _frameBuffer{nullptr};
         lithium::FrameBuffer *_borderDepthFBO{nullptr};
         std::shared_ptr<lithium::FrameBuffer> _bloomFBO{nullptr};
-        lithium::FrameBuffer *_horizontalBlurFBO{nullptr};
-        lithium::FrameBuffer *_verticalBlurFBO{nullptr};
-        lithium::FrameBuffer *_intermediateFBO{nullptr};
         std::shared_ptr<lithium::FrameBuffer> _waterDetectFBO{nullptr};
+        std::shared_ptr<lithium::ShaderProgram> _blurShader{nullptr};
         lithium::ShaderProgram* _depthShader{nullptr};
         lithium::ShaderProgram* _depthSkinningShader{nullptr};
         lithium::ShaderProgram* _sdfTextShader{nullptr};
         lithium::ShaderProgram* _debugDepthShader{nullptr};
         lithium::ShaderProgram* _screenMsaaShader{nullptr};
-        lithium::ShaderProgram* _blurShader{nullptr};
         lithium::ShaderProgram* _borderShader{nullptr};
         lithium::ShaderProgram* _normalShader{nullptr};
         lithium::ShaderProgram* _normalSkinningShader{nullptr};
@@ -84,7 +83,7 @@ class BasePipeline : public lithium::RenderPipeline
         glm::mat4 _lightSpaceMatrix;
         lithium::Text* _text;
         lithium::Light* _light{nullptr};
-        lithium::Mesh* _screenMesh{nullptr};
+        std::shared_ptr<lithium::Mesh> _screenMesh{nullptr};
         lithium::ShaderProgram* _lightShader{nullptr};
         std::shared_ptr<lithium::RenderGroup> _objects;
         std::shared_ptr<lithium::RenderGroup> _staticObjects;
@@ -95,4 +94,5 @@ class BasePipeline : public lithium::RenderPipeline
         std::shared_ptr<lithium::RenderStage> _bloomStage;
         std::shared_ptr<lithium::RenderStage> _waterDetectStage;
         std::shared_ptr<lithium::RenderStage> _mainStage;
+        std::shared_ptr<lithium::ExBlurStage> _blurStage;
 };
