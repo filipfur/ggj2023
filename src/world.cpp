@@ -24,9 +24,14 @@ World::World(std::vector<lithium::Updateable*>& updateables, lithium::RenderPipe
             lithium::Object* tile_clone  = new TerrainObject(*AssetFactory::getObjects()->tiles[uniqueTileIdx]);
             lithium::Object* grass_clone = new lithium::Object(*AssetFactory::getObjects()->grass[uniqueTileIdx]);
             lithium::Object* tree_close  = new lithium::Object(*AssetFactory::getObjects()->trees[uniqueTileIdx]);
+            tile_clone->setScale(1.01f);
             tile_clone->setPosition(xOffset, 0.0, zOffset);
             grass_clone->setPosition(xOffset, 0.0, zOffset);
             tree_close->setPosition(xOffset, 0.0, zOffset);
+            glm::vec3 rot{0.0f, (rand() % 4) * 90.0f, 0.0f};
+            tile_clone ->setRotation(rot);
+            grass_clone->setRotation(rot);
+            tree_close ->setRotation(rot);
             pipeline->addRenderable(tile_clone);
             pipeline->addRenderable(grass_clone);
             pipeline->addRenderable(tree_close);

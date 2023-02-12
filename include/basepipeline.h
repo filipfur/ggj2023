@@ -9,7 +9,7 @@
 #include "gllight.h"
 #include "glorthographiccamera.h"
 #include "gltext.h"
-#include "ex/glblurstage.h"
+#include "blurstage.h"
 
 class BasePipeline : public lithium::RenderPipeline
 {
@@ -59,7 +59,7 @@ class BasePipeline : public lithium::RenderPipeline
         std::shared_ptr<lithium::FrameBuffer> _shadowMapBuffer{nullptr};
         std::shared_ptr<lithium::FrameBuffer> _intermediateFBO{nullptr};
         std::shared_ptr<lithium::FrameBuffer> _frameBuffer{nullptr};
-        lithium::FrameBuffer *_borderDepthFBO{nullptr};
+        std::shared_ptr<lithium::FrameBuffer> _borderDepthFBO{nullptr};
         std::shared_ptr<lithium::FrameBuffer> _bloomFBO{nullptr};
         std::shared_ptr<lithium::FrameBuffer> _waterDetectFBO{nullptr};
         std::shared_ptr<lithium::ShaderProgram> _blurShader{nullptr};
@@ -76,7 +76,6 @@ class BasePipeline : public lithium::RenderPipeline
         lithium::ShaderProgram* _shaderProgram{nullptr};
         lithium::ShaderProgram* _islandProgram{nullptr};
         lithium::ShaderProgram* _waterProgram{nullptr};
-        lithium::ShaderProgram* _bloomProgram{nullptr};
         lithium::ShaderProgram* _skinningShader{nullptr};
         lithium::ShaderProgram* _instShader{nullptr};
         lithium::Object* _ocean{nullptr};
@@ -91,8 +90,9 @@ class BasePipeline : public lithium::RenderPipeline
         std::shared_ptr<lithium::RenderGroup> _skinnedObjects;
 
         std::shared_ptr<lithium::RenderStage> _shadowMapStage;
-        std::shared_ptr<lithium::RenderStage> _bloomStage;
         std::shared_ptr<lithium::RenderStage> _waterDetectStage;
         std::shared_ptr<lithium::RenderStage> _mainStage;
-        std::shared_ptr<lithium::ExBlurStage> _blurStage;
+        std::shared_ptr<BlurStage> _blurStage;
+        std::shared_ptr<lithium::RenderStage> _depthStage;
+        std::shared_ptr<lithium::RenderStage> _finalStage;
 };

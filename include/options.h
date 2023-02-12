@@ -15,7 +15,7 @@ namespace goptions
     static constexpr unsigned int numWorldTilesZ = numWorldTilesX;
 
     static constexpr unsigned int numUniqueTiles = 4;
-    static constexpr unsigned int numMeshSubdivisionsPerTileSide = 16;
+    static constexpr unsigned int numMeshSubdivisionsPerTileSide = 32;
 
     // Compile-time intialized in options.cpp
 

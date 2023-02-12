@@ -258,7 +258,7 @@ public:
 
         lithium::SimpleCamera* camera = _pipeline->camera();
         if (_character) {
-            camera->setTarget(_character->position());
+            camera->setTarget(_character->positionAndHeight());
         }
         camera->setPosition(camera->target() + glm::vec3{goptions::cameraOffsetX, goptions::cameraOffsetY, goptions::cameraOffsetZ});
 

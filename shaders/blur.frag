@@ -36,7 +36,7 @@ void main()
         {
             result += multiSample(diffuseTexture, ivec2(gl_FragCoord.x + tex_offset.x * i, gl_FragCoord.y)) * weight[i];
         }*/
-        for(int i = 1; i < 5; ++i)
+        for(int i = 1; i < 3; ++i)
         {
             result += texture(diffuseTexture, TexCoords + vec2(tex_offset.x * i, 0.0)).rgb * weight[i];
             result += texture(diffuseTexture, TexCoords - vec2(tex_offset.x * i, 0.0)).rgb * weight[i];
@@ -48,7 +48,7 @@ void main()
         {
             result += multiSample(diffuseTexture, ivec2(gl_FragCoord.x, gl_FragCoord.y + tex_offset.y * i)) * weight[i];
         }*/
-        for(int i = 1; i < 5; ++i)
+        for(int i = 1; i < 3; ++i)
         {
             result += texture(diffuseTexture, TexCoords + vec2(0.0, tex_offset.y * i)).rgb * weight[i];
             result += texture(diffuseTexture, TexCoords - vec2(0.0, tex_offset.y * i)).rgb * weight[i];

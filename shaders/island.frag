@@ -43,33 +43,20 @@ float ShadowCalculation(vec3 normal, vec3 lightDir)
     return shadow;
 }
 
+const vec3 lightDir = vec3(0,1,0);
+
 void main()
 {
     vec4 color = texture(u_texture_0, texCoord * 1.0);
     color.a *= u_color.a;
 
-    vec3 lightDir = normalize(vec3(0.1,1,0.1));
-
-    float diff = max(dot(lightDir, normal.xyz), 0.0);
-
     float shadow = ShadowCalculation(normal.xyz, lightDir) * 0.5;
 
-    //vec3 viewDir = normalize(viewPos - fragPos);
-    //float fresnel = dot(normal.xyz, viewDir);
-
-    float rim = 1.0 - max(dot(viewPos, normal.xyz), 0.0);
-    rim = smoothstep(0.0, 1.0, rim);
-    rim = 0.0;
-
-    //fragColor = vec4(color.rgb * stylize(diff, 2.0) * (1.0 - shadow) + color.rgb * vec3(rim) * 0.5, color.a);
-    fragColor = vec4(color.rgb * stylize(diff * (1.0 - shadow), 2.0) + color.rgb * stylize(rim * 0.5, 2.0), color.a);
+    fragColor = vec4(color.rgb * stylize(1.0 - shadow, 2.0), color.a);
 
     vec3 avg = vec3((fragColor.r + fragColor.g + fragColor.b) / 3.0f);
     fragColor.rgb = mix(avg * vec3(0.8, 0.4, 0.1) * 0.4, fragColor.grb * vec3(0.75, 0.55, 0.1), u_color.r * smoothstep(0.7, 1.0, 1.0 - length((texCoord.xy - 0.5))));
 
-    //fragColor = vec4(vec3(rim), 1.0);
-    //fragColor = vec4(normal.xyz, 1.0);
-    //fragColor = vec4(vec3(shadow), 1.0);
     float brightness = dot(fragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
     if(brightness > 1.0)
         brightColor = vec4(fragColor.rgb, 1.0);

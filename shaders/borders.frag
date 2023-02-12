@@ -102,7 +102,7 @@ void main()
         sobelOutline = smoothstep(0.9, 1.0, sobelOutline) * alpha;
     }
 
-    float exposure = 1.4; 
+    float exposure = 4.0; 
 
     vec3 color = mix(diffuse + bright, vec3(0.0, 0.0, 0.0), sobelDepth * 1.0);
 
@@ -116,13 +116,4 @@ void main()
     color = vec3(1.0) - exp(-color * exposure); // tone mapping
     // gamma correction 
     fragColor = vec4(pow(color, vec3(1.0 / 2.2)), 1.0);
-    //fragColor = vec4(diffuse, 1);
-    //fragColor = vec4(vec3(LinearizeDepth(terrainDepth.r) / far_plane), 1.0);
-    //fragColor = vec4(vec3(waterLine * waterMask.g), 1.0);
-    //fragColor = vec4(waterMask.r, 0, 0, 1);
-    //fragColor = vec4(vec3(alpha), 1.0);
-    //fragColor = vec4(vec3(depth01), 1.0);
-    //fragColor = vec4(texture(normalTexture, TexCoords).rgb, 1.0);
-    //fragColor = vec4(vec3(LinearizeDepth(texture(depthTexture, TexCoords).r) / far_plane), 1.0);
-    //fragColor = vec4(bright, 1.0);
 } 

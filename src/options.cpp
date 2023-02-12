@@ -16,7 +16,7 @@ const float goptions::oceanSideLengthX = goptions::numWorldTilesX * goptions::ti
 const float goptions::oceanSideLengthZ = goptions::numWorldTilesZ * goptions::tileSideLength;
 
 const float goptions::cameraOffsetX =  0.0 * goptions::tileSideLength;
-const float goptions::cameraOffsetY =  1.0 * goptions::tileSideLength;
+const float goptions::cameraOffsetY =  0.75 * goptions::tileSideLength;
 const float goptions::cameraOffsetZ = -goptions::cameraOffsetY;
 
 const float goptions::oceanYBaseOffset = 0.3;
