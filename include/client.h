@@ -15,11 +15,11 @@
 class Client
 {
 public:
-    Client(IClient* iClient, lithium::Input* input) : _iClient{iClient}, _socket{25563}
+    Client(IClient* iClient, std::shared_ptr<lithium::Input> input) : _iClient{iClient}, _socket{25563}
     {
-        _keyCache = new lithium::Input::KeyCache({GLFW_KEY_SPACE, GLFW_KEY_Q, GLFW_KEY_E, GLFW_KEY_F, GLFW_KEY_G,
+        _keyCache = std::shared_ptr<lithium::Input::KeyCache>(new lithium::Input::KeyCache({GLFW_KEY_SPACE, GLFW_KEY_Q, GLFW_KEY_E, GLFW_KEY_F, GLFW_KEY_G,
             GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3,
-            GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D});
+            GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D}));
         input->setKeyCache(_keyCache);
     }
 
@@ -215,7 +215,7 @@ public:
     private:
         IClient* _iClient;
         std::unique_ptr<std::thread> _thread;
-        lithium::Input::KeyCache* _keyCache{nullptr};
+        std::shared_ptr<lithium::Input::KeyCache> _keyCache{nullptr};
         letsgetsocial::Socket _socket;
         letsgetsocial::ClientStateList _clientStates;
         letsgetsocial::ClientStateList _clientStatesTemporary;
