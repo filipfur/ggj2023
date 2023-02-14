@@ -82,10 +82,9 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
 
     glViewport(0, 0, resolution.x, resolution.y);
 
-    _orthoCamera = new lithium::OrthographicCamera(0, resolution.x, 0, resolution.y, -10000.0f, 10000.0f);
+    _orthoCamera = new lithium::OrthographicCamera(0, 1600, 0, 900, -10000.0f, 10000.0f);
     _sdfTextShader = new lithium::ShaderProgram("shaders/sdfTextOrtho.vert", "shaders/sdfText.frag");
-    _orthoCamera->attachShader(_sdfTextShader);
-    _orthoCamera->update(0);
+    _sdfTextShader->setUniform("u_camera", _orthoCamera->matrix());
 
     _camera->setPosition(glm::vec3{10.0f, 30.0f, 10.0f});
     _camera->setTarget(glm::vec3{0.0f});
@@ -93,7 +92,6 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
 
     _text = new lithium::Text(AssetFactory::getFonts()->permanentMarker, "Hello ggj2023!", 1.6f);
     //_text->setPosition(800.0f, 400.0f, 0.0f);
-    _text->setAlignment(lithium::Text::Alignment::LEFT);
     _text->setColor(glm::vec3{1.0f, 0.0f, 1.0f});
 
     glEnable(GL_DEPTH_TEST);
@@ -304,11 +302,14 @@ void BasePipeline::render()
     lithium::RenderPipeline::render();
 }
 
-void BasePipeline::renderText(float x, float y, const std::string& str)
+void BasePipeline::renderText(float x, float y, const std::string& str, float scale, const glm::vec3& color, bool horizontalAlign, bool verticalAlign)
 {
-    _text->setPosition(x, y, 0.0f);
+    _text->setTextScale(scale);
+    _text->setColor(color);
     _text->setText(str);
-    _text->update(0);
+    _text->setPosition(x - (horizontalAlign ? _text->width() * 0.5f : 0.0f),
+        y - (verticalAlign ? _text->height() * 0.5f : 0.0f),
+        0.0f);
     _text->shade(_sdfTextShader);
     _text->draw();
 }

@@ -28,17 +28,7 @@ class BasePipeline : public lithium::RenderPipeline
             _light = light;
         }
 
-        void renderText(float x, float y, const std::string& str);
-
-        void textColor(const glm::vec3& color)
-        {
-            _text->setColor(color);
-        }
-
-        void textScale(float scale)
-        {
-            _text->setScale(scale);
-        }
+        void renderText(float x, float y, const std::string& str, float scale=1.0f, const glm::vec3& color=glm::vec3{1.0f}, bool horizontalAlign=true, bool verticalAlign=true);
 
         void setLightSpaceMatrix(const glm::mat4 lightSpaceMatrix)
         {

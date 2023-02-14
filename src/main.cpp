@@ -64,11 +64,11 @@ public:
         playAudio("assets/sounds/themesong.wav");
 
         input()->addPressedCallback(GLFW_KEY_UP, [this](int mods, int key){
-            _menu->next();
+            _menu->previous();
             return true;
         });
         input()->addPressedCallback(GLFW_KEY_DOWN, [this](int mods, int key){
-            _menu->previous();
+            _menu->next();
             return true;
         });
         input()->addPressedCallback(GLFW_KEY_ENTER, [this](int mods, int key){
@@ -292,24 +292,18 @@ public:
         }
         if(_character && _character->state() == 0xF)
         {
-            _pipeline->textColor(glm::vec3{1.0f, 0.0f, 0.0f});
-            _pipeline->textScale(4.0f);
-            _pipeline->renderText(150.0f, 400.0f, "GAME OVER");
+            _pipeline->renderText(800.0f, 400.0f, "GAME OVER", 4.0f, glm::vec3{1.0f, 0.0f, 0.0f});
         }
 
         if(_client && _client->serverTime() < 0.01f)
         {
-            _pipeline->textColor(glm::vec3{1.0f, 1.0f, 1.0f});
-            _pipeline->textScale(1.0f);
-            _pipeline->renderText(100.0f, 200.0f, "Waiting for other players...");
+            _pipeline->renderText(800.0f, 200.0f, "Waiting for other players...", 2.0f);
         }
         if(_character && _client->serverTime() > 0.1f)
         {
             if(_character->state() != 0xF && _allMyFriendsAreDead)
             {
-                _pipeline->textColor(glm::vec3{1.0f, 1.0f, 0.0f});
-                _pipeline->textScale(4.0f);
-                _pipeline->renderText(150.0f, 400.0f, " YOU WON!");
+                _pipeline->renderText(800.0f, 400.0f, " YOU WON!", 8.0f, glm::vec3{1.0f, 1.0f, 0.0f});
             }
         }
     }
