@@ -19,13 +19,13 @@ void Menu::render()
 {
     /*_pipeline->renderText(400.0f, 400.0f, "Testing");
     _pipeline->renderText(500.0f, 500.0f, "Yoo");*/
-    _pipeline->renderText(800.0f, 760.0f, "Tater Tangle", 6.0f);
+    /*_pipeline->renderText(800.0f, 760.0f, "Tater Tangle", 4.0f, glm::vec3{1.0f, 1.0f, 0.5f});
     int i{0};
     forEachChild([this, &i](lithium::MenuItem* menuItem){
         bool isCurrent{menuItem == this->current()};
         _pipeline->renderText(800.0f, 500.0f - i * 100.0f, (isCurrent ? "" : "") + menuItem->label(),
             2.0f,
-            isCurrent ? glm::vec3{0.5f, 1.0f, 0.5f} : glm::vec3{1.0f, 1.0f, 1.0f}, true, false);
+            isCurrent ? glm::vec3{0.5f, 1.0f, 0.5f} : glm::vec3{1.0f, 1.0f, 0.5f}, true, false);
         ++i;
-    });
+    });*/
 }

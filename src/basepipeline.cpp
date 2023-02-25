@@ -37,7 +37,8 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
     _waterDetectFBO{std::make_shared<lithium::FrameBuffer>(resolution, lithium::FrameBuffer::Mode::DEFAULT)},
     _intermediateFBO{std::make_shared<lithium::FrameBuffer>(resolution, lithium::FrameBuffer::Mode::DEFAULT)},
     _borderDepthFBO{std::make_shared<lithium::FrameBuffer>(resolution, lithium::FrameBuffer::Mode::DEFAULT)},
-    _screenMesh{std::make_shared<lithium::Mesh>(screenMeshAttributes, screenMeshVertices, screenMeshIndices)}
+    _screenMesh{std::make_shared<lithium::Mesh>(screenMeshAttributes, screenMeshVertices, screenMeshIndices)},
+    _textRenderer{std::make_shared<lithium::ExTextRenderer>(glm::vec4{0, 0, 1600, 900})}
 {
     _camera = new lithium::SimpleCamera(glm::perspective(SIMPLE_CAMERA_FOV, (float)resolution.x / (float)resolution.y, SIMPLE_CAMERA_NEAR, SIMPLE_CAMERA_FAR));
     
@@ -52,11 +53,16 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
     _staticObjects = createRenderGroup([](lithium::Renderable* renderable) {
         return dynamic_cast<lithium::Object*>(renderable)
             && dynamic_cast<TerrainObject*>(renderable) == nullptr
-            && dynamic_cast<lithium::SkinnedObject*>(renderable) == nullptr;
+            && dynamic_cast<lithium::SkinnedObject*>(renderable) == nullptr
+            && dynamic_cast<lithium::Text*>(renderable) == nullptr;
     });
 
     _skinnedObjects = createRenderGroup([](lithium::Renderable* renderable) {
         return dynamic_cast<lithium::SkinnedObject*>(renderable);
+    });
+
+    _textObjects = createRenderGroup([](lithium::Renderable* renderable) {
+        return dynamic_cast<lithium::Text*>(renderable);
     });
 
     _lightShader = new lithium::ShaderProgram("shaders/light.vert", "shaders/light.frag");
@@ -81,10 +87,6 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
     _shadowMapBuffer->unbind();
 
     glViewport(0, 0, resolution.x, resolution.y);
-
-    _orthoCamera = new lithium::OrthographicCamera(0, 1600, 0, 900, -10000.0f, 10000.0f);
-    _sdfTextShader = new lithium::ShaderProgram("shaders/sdfTextOrtho.vert", "shaders/sdfText.frag");
-    _sdfTextShader->setUniform("u_camera", _orthoCamera->matrix());
 
     _camera->setPosition(glm::vec3{10.0f, 30.0f, 10.0f});
     _camera->setTarget(glm::vec3{0.0f});
@@ -238,6 +240,7 @@ BasePipeline::BasePipeline(const glm::ivec2& resolution)
         _waterProgram->setUniform("iTime", _ocean->time());
         _ocean->shade(_waterProgram);
         _ocean->draw();
+        _textRenderer->render(_textObjects);
 #ifdef WIREFRAME_MODE
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
@@ -300,16 +303,4 @@ void BasePipeline::render()
     _depthSkinningShader->setUniform("u_view", projView);*/
     
     lithium::RenderPipeline::render();
-}
-
-void BasePipeline::renderText(float x, float y, const std::string& str, float scale, const glm::vec3& color, bool horizontalAlign, bool verticalAlign)
-{
-    _text->setTextScale(scale);
-    _text->setColor(color);
-    _text->setText(str);
-    _text->setPosition(x - (horizontalAlign ? _text->width() * 0.5f : 0.0f),
-        y - (verticalAlign ? _text->height() * 0.5f : 0.0f),
-        0.0f);
-    _text->shade(_sdfTextShader);
-    _text->draw();
 }

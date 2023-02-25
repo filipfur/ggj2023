@@ -10,6 +10,7 @@
 #include "glorthographiccamera.h"
 #include "gltext.h"
 #include "blurstage.h"
+#include "ex/gltextrenderer.h"
 
 class BasePipeline : public lithium::RenderPipeline
 {
@@ -28,8 +29,6 @@ class BasePipeline : public lithium::RenderPipeline
             _light = light;
         }
 
-        void renderText(float x, float y, const std::string& str, float scale=1.0f, const glm::vec3& color=glm::vec3{1.0f}, bool horizontalAlign=true, bool verticalAlign=true);
-
         void setLightSpaceMatrix(const glm::mat4 lightSpaceMatrix)
         {
             _lightSpaceMatrix = lightSpaceMatrix;
@@ -43,7 +42,6 @@ class BasePipeline : public lithium::RenderPipeline
 
     private:
         lithium::SimpleCamera* _camera{nullptr};
-        lithium::OrthographicCamera* _orthoCamera;
         lithium::UniformBufferObject* _sceneUBO;
         lithium::RenderBuffer *_renderBuffer{nullptr};
         std::shared_ptr<lithium::FrameBuffer> _shadowMapBuffer{nullptr};
@@ -78,6 +76,9 @@ class BasePipeline : public lithium::RenderPipeline
         std::shared_ptr<lithium::RenderGroup> _staticObjects;
         std::shared_ptr<lithium::RenderGroup> _terrainObjects;
         std::shared_ptr<lithium::RenderGroup> _skinnedObjects;
+        std::shared_ptr<lithium::RenderGroup> _textObjects;
+
+        std::shared_ptr<lithium::ExTextRenderer> _textRenderer;
 
         std::shared_ptr<lithium::RenderStage> _shadowMapStage;
         std::shared_ptr<lithium::RenderStage> _waterDetectStage;

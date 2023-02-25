@@ -16,9 +16,31 @@ void serverThreadFunc(Server* server)
     server->serve();
 }
 
+void createText(std::shared_ptr<lithium::Text>& ref,
+    std::shared_ptr<lithium::Font> font,
+    float x, float y,
+    const std::string& text,
+    float textScale,
+    const glm::vec3& color,
+    bool horizontalAlign, bool verticalAlign)
+{
+    ref = std::make_shared<lithium::Text>(font, text, textScale);
+    ref->setPosition(glm::vec3{x - (horizontalAlign ? ref->width() * 0.5f : 0.0f),
+        y - (verticalAlign ? ref->height() * 0.5f : 0.0f), 0.0f});
+    ref->setColor(color);
+}
+
 class App : public lithium::Application, public IClient
 {
 public:
+    enum class State
+    {
+        Menu,
+        Lobby,
+        Game,
+        GameOver
+    };
+
     App() : lithium::Application{"GGJ2023 | GG NO RE",
     glm::ivec2{1600, 900}, lithium::Application::Mode::MULTISAMPLED_4X, false}
     //glm::ivec2{1920, 1080}, lithium::Application::Mode::MULTISAMPLED_4X, true}
@@ -52,6 +74,37 @@ public:
         _world = new World(_updateables, _pipeline);
         _ocean = new Ocean(_pipeline);
         _menu = new Menu(_pipeline);
+
+        createText(_gameOverText, AssetFactory::getFonts()->permanentMarker, 800.0f, 400.0f, "GAME OVER", 4.0f, glm::vec3{1.0f, 0.0f, 0.0f}, true, true);
+        _pipeline->addRenderable(_gameOverText.get());
+        _gameOverText->setVisible(false);
+
+        createText(_connectingText, AssetFactory::getFonts()->permanentMarker, 800.0f, 200.0f, "Waiting for other players...", 2.0f, glm::vec3{1.0f}, true, true);
+        _pipeline->addRenderable(_connectingText.get());
+        _connectingText->setVisible(false);
+
+        createText(_titleText, AssetFactory::getFonts()->permanentMarker, 760.0f, 650.0f, "Tater Tangle", 4.0f, glm::vec3{1.0f, 1.0f, 0.5f}, true, true);
+        _pipeline->addRenderable(_titleText.get());
+
+        int i{0};
+        _menu->forEachChild([this, &i](lithium::MenuItem* menuItem){
+            createText(_menuItemText[i], AssetFactory::getFonts()->permanentMarker,
+                800.0f, 500.0f - i * 100.0f,
+                menuItem->label(),
+                2.0f,
+                glm::vec3{1.0f, 1.0f, 0.5f}, true, true);
+            _pipeline->addRenderable(_menuItemText[i].get());
+            _updateables.push_back(_menuItemText[i].get());
+            _menuItemText[i]->setUpdateCallback([this, menuItem](lithium::Updateable* u, float time, float dt){
+                lithium::Text* text = dynamic_cast<lithium::Text*>(u);
+                text->setColor(_menu->current() == menuItem
+                    ? glm::vec4{0.1f, 1.0f, 0.1f, 1.0f}
+                    : glm::vec4{1.0f, 1.0f, 0.1f, 1.0f});
+                //text->setColor(glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
+                return true;
+            });
+            ++i;
+        });
 
         _updateables.push_back(_light);
         _updateables.push_back(_ocean->object());
@@ -113,6 +166,33 @@ public:
 
     virtual void onCharacterDespawned(uint8_t clientId, uint8_t characterId) override
     {
+    }
+
+    void setState(State state)
+    {
+        if(state != _state)
+        {
+            _state = state;
+            switch(state)
+            {
+                case State::Menu:
+                    for(int i{0}; i < 4; ++i)
+                    {
+                        _menuItemText[i]->setVisible(true);
+                    }
+                    _titleText->setVisible(true);
+                    break;
+                case State::Lobby:
+                    _connectingText->setVisible(true);
+                    break;
+                case State::Game:
+                    _connectingText->setVisible(false);
+                    break;
+                case State::GameOver:
+                    _gameOverText->setVisible(true);
+                    break;
+            }
+        }
     }
 
     virtual void onReceivedFromServer(uint8_t clientId, uint8_t characterId, uint8_t health, uint8_t state, float force, float aimDirection, const glm::vec3& xrz) override
@@ -284,26 +364,31 @@ public:
         }
 
         _pipeline->render();
-        if(_showMenu) { _menu->render(); }
-        if(_server != nullptr)
+        switch(_state)
         {
-            //_pipeline->textColor(glm::vec3{1.0f, 1.0f, 0.0f});
-            //_pipeline->renderText(600.0f, 600.0f, "SERVING");
-        }
+            case State::Menu:
+                _menu->render();
+                break;
+        };
         if(_character && _character->state() == 0xF)
         {
-            _pipeline->renderText(800.0f, 400.0f, "GAME OVER", 4.0f, glm::vec3{1.0f, 0.0f, 0.0f});
+            setState(State::GameOver);
         }
 
         if(_client && _client->serverTime() < 0.01f)
         {
-            _pipeline->renderText(800.0f, 200.0f, "Waiting for other players...", 2.0f);
+            _connectingText->setVisible(true);
+            if(_state == State::Lobby)
+            {
+                setState(State::Game);
+            }
         }
         if(_character && _client->serverTime() > 0.1f)
         {
             if(_character->state() != 0xF && _allMyFriendsAreDead)
             {
-                _pipeline->renderText(800.0f, 400.0f, " YOU WON!", 8.0f, glm::vec3{1.0f, 1.0f, 0.0f});
+                setState(State::GameOver);
+                _gameOverText->setText("WINNER");
             }
         }
     }
@@ -327,6 +412,11 @@ private:
     lithium::ShaderProgram* _zShader{nullptr};
     lithium::FrameBuffer *_zBuffer{nullptr};
     bool _allMyFriendsAreDead{false};
+    std::shared_ptr<lithium::Text> _gameOverText{nullptr};
+    std::shared_ptr<lithium::Text> _titleText{nullptr};
+    std::shared_ptr<lithium::Text> _menuItemText[4];
+    std::shared_ptr<lithium::Text> _connectingText{nullptr};
+    State _state{State::Menu};
 };
 
 void init()
